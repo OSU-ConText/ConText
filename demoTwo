@@ -1,0 +1,36 @@
+from googletrans import Translator
+from wonderwords import RandomSentence
+import msgGeneration
+
+def messageSimulation():
+    #read in 3 parameters from user input in console, pass into generateStats
+    #generate stats for a demo user
+    #generateStats(contextParamOne, contextParamTwo, contextParam3)
+    #print users stats
+    #printStats(user)
+    #send message
+    #msgGeneration.sendMessage()
+    #update stats (database)
+    #print stats
+    #printStats(user)
+    #send message
+    #msgGeneration.sendMessage()
+    #update stats (database)
+    #print stats
+    #printStats(user)
+    #receive message
+    #print stats
+    #printStats(user)
+    #show language decision
+    #show received message (translated into english)
+    return
+
+def printStats(user):
+    #read from database for a certain user
+    #format and print stats to console
+    return
+
+def generateStats(contextParamOne, contextParamTwo, contextParam3):
+    #generate stats for a user
+    #update database with user stats
+    return
