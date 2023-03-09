@@ -68,6 +68,16 @@ def create_user():
         (conv_id, user_id))
         con.commit()
 
-#def create_conversation():
+    return user_id
 
-#def increment_count(lang):
+#def create_conversation():
+#"SELECT score FROM movie WHERE title = ?"
+def getAttrFromMessageCounts(desiredAttr,conv_id):
+    attr = cur.execute(f"SELECT {desiredAttr} FROM {message_counts} WHERE conv_id = {conv_id}").fetchall()
+    return attr[0][0]
+
+#def increment_count(lang, conv_id):
+
+    #get user id of conversation
+    #increment lang in conversation
+    #increment lang in -user_id (all messages)
