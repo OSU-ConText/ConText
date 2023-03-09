@@ -71,13 +71,19 @@ def create_user():
     return user_id
 
 #def create_conversation():
-#"SELECT score FROM movie WHERE title = ?"
-def getAttrFromMessageCounts(desiredAttr,conv_id):
+
+def get_attr_from_message_counts(desiredAttr,conv_id):
     attr = cur.execute(f"SELECT {desiredAttr} FROM {message_counts} WHERE conv_id = {conv_id}").fetchall()
     return attr[0][0]
 
-#def increment_count(lang, conv_id):
+def test_get_attr_from_message_counts():
+    uid = create_user()
+    if get_attr_from_message_counts("user_id",-1 * uid) == uid :
+        print("success")
+    else:
+        print("fail")
 
+#def increment_count(lang, conv_id):
     #get user id of conversation
     #increment lang in conversation
     #increment lang in -user_id (all messages)
