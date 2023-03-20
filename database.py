@@ -37,7 +37,7 @@ def create_tables():
 
     if (check_table_existence(sent_history, True) == False):
         print(f'creating {sent_history} table')
-        cur.execute(f"CREATE TABLE {sent_history}(conv_id, user_id, recipient_history_id, conv_messages_lang, last_message_lang, is_all_messages, en, fr, total)")
+        cur.execute(f"CREATE TABLE {sent_history}(sent_id, user_id, recipient_history_id, conv_messages_lang, last_message_lang, is_all_messages, en, fr, total)")
         print(f'{sent_history} table created')
 
 #Will create a user, inserting a row in both tables to keep track of their parameters and their overall messages counts
@@ -58,7 +58,7 @@ def create_user():
     #create row in message counts to store all messages history
 
     #as per schema, conversation id for all message history is user_id * -1
-    conv_id = user_id * -1
+    sent_id = user_id * -1
 
     #create row in sent_history table to store all user sending history
     if (check_table_existence(sent_history) == True):
@@ -67,15 +67,42 @@ def create_user():
             INSERT INTO {sent_history} VALUES
             (?, ?, NULL, NULL, NULL, 1, 0, 0, 0)
         """, 
-        (conv_id, user_id))
+        (sent_id, user_id))
         con.commit()
 
     return user_id
 
-#def create_conversation():
+def create_sent_history(user_id_1, user_id_2):
+    #verify integers are provided
+    user_id_1 = int(user_id_1)
+    user_id_2 = int(user_id_2)
 
-def get_attr_from_sent_history(desiredAttr,conv_id):
-    attr = cur.execute(f"SELECT {desiredAttr} FROM {sent_history} WHERE conv_id = {conv_id}").fetchall()
+    if (check_table_existence(sent_history) == True):
+        #TODO: automatically generate sent_id
+        sent_id = 1
+
+        #insert first row, user_id_1 history being recorded
+        cur.execute(f"""
+            INSERT INTO {sent_history} VALUES
+            (?, ?, ?, NULL, NULL, 0, 0, 0, 0)
+        """, 
+        (sent_id, user_id_1, user_id_2))
+        con.commit()
+
+        #increment sent_id for the next insert
+        sent_id += 1
+
+        #insert second row, user_id_2 history being recorded
+        cur.execute(f"""
+            INSERT INTO {sent_history} VALUES
+            (?, ?, ?, NULL, NULL, 0, 0, 0, 0)
+        """, 
+        (sent_id, user_id_2, user_id_1))
+        con.commit()
+
+
+def get_attr_from_sent_history(desiredAttr,sent_id):
+    attr = cur.execute(f"SELECT {desiredAttr} FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()
     return attr[0][0]
 
 def test_get_attr_from_sent_history():
@@ -85,7 +112,7 @@ def test_get_attr_from_sent_history():
     else:
         print("fail")
 
-#def increment_count(lang, conv_id):
+#def increment_count(lang, sent_id):
     #get user id of conversation
     #increment lang in conversation
     #increment lang in -user_id (all messages) for ALL conversations!
