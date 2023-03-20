@@ -86,4 +86,4 @@ def test_get_attr_from_message_counts():
 #def increment_count(lang, conv_id):
     #get user id of conversation
     #increment lang in conversation
-    #increment lang in -user_id (all messages)
+    #increment lang in -user_id (all messages) for ALL conversations!
