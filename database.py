@@ -28,7 +28,7 @@ def check_table_existence(table_name, creating=False):
 def get_language_columns():
     str = ' INTEGER DEFAULT 0, '.join(languages.LANGUAGES.keys())
     str += ' INTEGER DEFAULT 0, '
-    
+
     #character - not allowed in sqlite column names
     str = str.replace('-', '_')
     return str
@@ -38,18 +38,13 @@ def get_language_columns():
 def create_tables():
     if (check_table_existence(user, True) == False):
         print(f'creating {user} table')
-<<<<<<< HEAD
         cur.execute(f'''CREATE TABLE {user}
             (user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
             all_messages_lang CHARACTER(5))''')
-=======
-        cur.execute(f"CREATE TABLE {user}(user_id, all_messages_lang)")
->>>>>>> dan
         print(f'{user} table created')
 
     if (check_table_existence(sent_history, True) == False):
         print(f'creating {sent_history} table')
-<<<<<<< HEAD
         cur.execute(f'''CREATE TABLE {sent_history}
             (sent_id INTEGER PRIMARY KEY AUTOINCREMENT, 
             user_id INTEGER NOT NULL, 
@@ -75,51 +70,27 @@ def delete_tables():
 def create_user():
     if (check_table_existence(user) == True):
         #automate this step at some point
-=======
-        cur.execute(f"CREATE TABLE {sent_history}(sent_id, user_id, recipient_history_id, conv_messages_lang, last_message_lang, is_all_messages, en, fr, total)")
-        print(f'{sent_history} table created')
-
-#Will create a user, inserting a row in both tables to keep track of their parameters and their overall messages counts
-def create_user():
-    #create row in user table to store the user
-    if (check_table_existence(user) == True):
-        #TODO: automate this step at some point
->>>>>>> dan
         user_id = int(input('What numeric user id would you like to assign? '))
 
         #execute insertion of user and commit
         cur.execute(f"""
             INSERT INTO {user} VALUES
-<<<<<<< HEAD
-            (?, 0)
-=======
             (?, NULL)
->>>>>>> dan
         """, 
         (user_id,))
         con.commit()
 
     #create row in message counts to store all messages history
 
-<<<<<<< HEAD
-    #as per schema, sent id for all message history is user_id * -1
-    sent_id = user_id * -1
-
-=======
     #as per schema, conversation id for all message history is user_id * -1
     sent_id = user_id * -1
 
     #create row in sent_history table to store all user sending history
->>>>>>> dan
     if (check_table_existence(sent_history) == True):
         #execute insertion of user and commit
         cur.execute(f"""
             INSERT INTO {sent_history} VALUES
-<<<<<<< HEAD
-            (?, ?, 0, 0, 0)
-=======
             (?, ?, NULL, NULL, NULL, 1, 0, 0, 0)
->>>>>>> dan
         """, 
         (sent_id, user_id))
         con.commit()
@@ -131,9 +102,6 @@ def create_sent_history(user_id_1, user_id_2):
     user_id_1 = int(user_id_1)
     user_id_2 = int(user_id_2)
 
-<<<<<<< HEAD
-def get_attr_from_message_counts(desiredAttr,sent_id):
-=======
     if (check_table_existence(sent_history) == True):
         #TODO: automatically generate sent_id
         sent_id = 1
@@ -197,7 +165,6 @@ def get_preferred_lang(sent_id):
 
 
 def get_attr_from_sent_history(desiredAttr,sent_id):
->>>>>>> dan
     attr = cur.execute(f"SELECT {desiredAttr} FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()
     return attr[0][0]
 
