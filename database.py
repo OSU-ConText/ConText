@@ -40,7 +40,7 @@ def create_tables():
         print(f'creating {user} table')
         cur.execute(f'''CREATE TABLE {user}
             (user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
-            all_messages_lang CHARACTER(5))''')
+            all_messages_lang CHARACTER(5) DEFAULT NULL)''')
         print(f'{user} table created')
 
     if (check_table_existence(sent_history, True) == False):
@@ -49,9 +49,9 @@ def create_tables():
             (sent_id INTEGER PRIMARY KEY AUTOINCREMENT, 
             user_id INTEGER NOT NULL, 
             recipient_history_id INTEGER, 
-            conv_messages_lang CHARACTER(5), 
-            last_message_lang CHARACTER(5), 
-            is_all_messages INTEGER,''' 
+            conv_messages_lang CHARACTER(5) DEFAULT NULL, 
+            last_message_lang CHARACTER(5) DEFAULT NULL, 
+            is_all_messages INTEGER DEFAULT 0,''' 
             + get_language_columns() + 
             f'''total INTEGER DEFAULT 0,
             FOREIGN KEY(user_id) REFERENCES {user}(user_id),
@@ -72,36 +72,28 @@ def create_user():
 
         #execute insertion of user and commit
         cur.execute(f"""
-            INSERT INTO {user} VALUES
-            (NULL, NULL)
+            INSERT INTO {user} (user_id) VALUES 
+            (NULL)
         """,)
         con.commit()
 
     #create row in message counts to store all messages history
 
-    #TODO: Change hardcoded 1 value
-    user_id = 1
+    user_id = cur.lastrowid
 
     #as per schema, conversation id for all message history is user_id * -1
     sent_id = user_id * -1
 
     #create row in sent_history table to store all user sending history
     if (check_table_existence(sent_history) == True):
-        #set up NULL insertions
-        null_string = ''
-        #', None' * 106
-
-
         #execute insertion of user and commit
         cur.execute(f"""
-            INSERT INTO {sent_history} (sent_id, user_id, recipient_history_id, conv_messages_lang, last_message_lang, is_all_messages) VALUES
-            (?, ?, NULL, NULL, NULL, 1 """
-            + null_string
-            + """)
-        """, 
-        (sent_id, user_id))
+            INSERT INTO {sent_history} (sent_id, user_id, recipient_history_id, is_all_messages) VALUES
+            (?, ?, ?, 1 )""", 
+        (sent_id, user_id, sent_id))
         con.commit()
 
+    print(f"added user", (user_id))
     return user_id
 
 def create_sent_history(user_id_1, user_id_2):

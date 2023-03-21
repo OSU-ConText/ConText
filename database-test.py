@@ -10,6 +10,7 @@ while (not_quit):
     print('create [S]ent history')
     print('[G]et preferred language for a user')
     print('[SU] Get users for a particular sent_id')
+    print('[SI] Get sent ids for a particular user_id')
     print('[Q]uit the program')
 
     user_input = input()
@@ -31,6 +32,10 @@ while (not_quit):
         users = database.get_users_sent_history(sent_id)
         print(users[0])
         print(users[1])
+    elif (user_input == 'SI'):
+        user_id = input('What user_id would you like to get the sent_ids for? ')
+        sent_ids = database.get_sent_ids(user_id)
+        print(sent_ids)
     elif (user_input == 'Q'):
         print('Thanks for stopping by!')
         not_quit = False
