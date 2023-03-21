@@ -24,7 +24,8 @@ def check_table_existence(table_name, creating=False):
     return table_exists
 
 def get_language_columns():
-    str = ', '.join(languages.LANGUAGES.keys())
+    str = ' int, '.join(languages.LANGUAGES.keys())
+    str = str.replace('-', '_')
     return str
 
 
@@ -37,8 +38,15 @@ def create_tables():
 
     if (check_table_existence(sent_history, True) == False):
         print(f'creating {sent_history} table')
-        cur.execute(f"CREATE TABLE {sent_history}(sent_id INTEGER PRIMARY KEY, user_id, recipient_history_id, conv_messages_lang, last_message_lang, is_all_messages, " + get_language_columns() + ")")
+        cur.execute(f"CREATE TABLE {sent_history}(sent_id, user_id, recipient_history_id, conv_messages_lang, last_message_lang, is_all_messages," + get_language_columns() + ", total)")
         print(f'{sent_history} table created')
+
+def delete_tables():
+    cur.execute("DROP TABLE user")
+    cur.execute("DROP TABLE sent_history")
+    print("Table dropped... ")
+    #Commit your changes in the database
+    con.commit()
 
 #Will create a user, inserting a row in both tables to keep track of their parameters and their overall messages counts
 def create_user():

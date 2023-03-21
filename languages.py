@@ -1,4 +1,7 @@
 #language abbreviations for google translate
+#note: in google translate, chinese simplified is denoted by zh-cn and chinese traditional is denoted by ch-tw
+#      but sqlite does not accept - for column headers
+#note2: removed icelandic and odia as supported languages because keys are keywords in sqlite
 LANGUAGES = {
     'af': 'afrikaans',
     'sq': 'albanian',
@@ -41,7 +44,6 @@ LANGUAGES = {
     'hi': 'hindi',
     'hmn': 'hmong',
     'hu': 'hungarian',
-    'is': 'icelandic',
     'ig': 'igbo',
     'id': 'indonesian',
     'ga': 'irish',
@@ -70,7 +72,6 @@ LANGUAGES = {
     'my': 'myanmar (burmese)',
     'ne': 'nepali',
     'no': 'norwegian',
-    'or': 'odia',
     'ps': 'pashto',
     'fa': 'persian',
     'pl': 'polish',
