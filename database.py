@@ -102,27 +102,30 @@ def create_sent_history(user_id_1, user_id_2):
     user_id_2 = int(user_id_2)
 
     if (check_table_existence(sent_history) == True):
-        #TODO: automatically generate sent_id
-        sent_id = 1
 
         #insert first row, user_id_1 history being recorded
         cur.execute(f"""
-            INSERT INTO {sent_history} VALUES
-            (?, ?, ?, NULL, NULL, 0, 0, 0, 0)
-        """, 
-        (sent_id, user_id_1, user_id_2))
+            INSERT INTO {sent_history} (user_id) VALUES
+            ({user_id_1})
+        """)
         con.commit()
 
-        #increment sent_id for the next insert
-        sent_id += 1
+        recipient_id1 = cur.lastrowid
 
         #insert second row, user_id_2 history being recorded
         cur.execute(f"""
-            INSERT INTO {sent_history} VALUES
-            (?, ?, ?, NULL, NULL, 0, 0, 0, 0)
-        """, 
-        (sent_id, user_id_2, user_id_1))
+            INSERT INTO {sent_history} (user_id, recipient_history_id) VALUES
+            ({user_id_2}, {recipient_id1})
+        """)
         con.commit()
+
+        recipient_id2 = cur.lastrowid
+
+        cur.execute(f"""
+                UPDATE {sent_history} SET recipient_history_id = {recipient_id2}
+                WHERE sent_id = {recipient_id1}
+            """) 
+        con.commit()       
 
 #will return list of user ids associated with a sent id, first entry is user_id, second entry is recipient_history_id
 def get_users_sent_history(sent_id):
