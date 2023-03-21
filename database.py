@@ -7,6 +7,8 @@ sent_history = "sent_history"
 
 #connect to the database
 con = sqlite3.connect("context.db")
+#enable foreign keys
+con.execute("PRAGMA foreign_keys = ON")
 cur = con.cursor()
 
 
@@ -24,7 +26,8 @@ def check_table_existence(table_name, creating=False):
     return table_exists
 
 def get_language_columns():
-    str = ' int, '.join(languages.LANGUAGES.keys())
+    str = ' INTEGER DEFAULT 0, '.join(languages.LANGUAGES.keys())
+    str += ' INTEGER DEFAULT 0, '
     str = str.replace('-', '_')
     return str
 
@@ -33,19 +36,32 @@ def get_language_columns():
 def create_tables():
     if (check_table_existence(user, True) == False):
         print(f'creating {user} table')
-        cur.execute(f"CREATE TABLE {user}(user_id INTEGER PRIMARY KEY, all_messages_lang)")
+        cur.execute(f'''CREATE TABLE {user}
+            (user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            all_messages_lang CHARACTER(5))''')
         print(f'{user} table created')
 
     if (check_table_existence(sent_history, True) == False):
         print(f'creating {sent_history} table')
-        cur.execute(f"CREATE TABLE {sent_history}(sent_id, user_id, recipient_history_id, conv_messages_lang, last_message_lang, is_all_messages," + get_language_columns() + ", total)")
+        cur.execute(f'''CREATE TABLE {sent_history}
+            (sent_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            user_id INTEGER NOT NULL, 
+            recipient_history_id INTEGER NOT NULL, 
+            conv_messages_lang CHARACTER(5), 
+            last_message_lang CHARACTER(5), 
+            is_all_messages CHARACTER(5),''' 
+            + get_language_columns() + 
+            f'''total INTEGER DEFAULT 0,
+            FOREIGN KEY(user_id) REFERENCES {user}(user_id),
+            FOREIGN KEY(recipient_history_id) REFERENCES {sent_history}(sent_id))''')
         print(f'{sent_history} table created')
 
 def delete_tables():
-    cur.execute("DROP TABLE user")
-    cur.execute("DROP TABLE sent_history")
+    if (check_table_existence(user, True) == True):
+        cur.execute("DROP TABLE user")
+    if (check_table_existence(sent_history, True) == True):
+        cur.execute("DROP TABLE sent_history")
     print("Table dropped... ")
-    #Commit your changes in the database
     con.commit()
 
 #Will create a user, inserting a row in both tables to keep track of their parameters and their overall messages counts
