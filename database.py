@@ -40,7 +40,7 @@ def create_tables():
         print(f'creating {user} table')
         cur.execute(f'''CREATE TABLE {user}
             (user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
-            all_messages_lang CHARACTER(5) DEFAULT NULL)''')
+            all_messages_lang TEXT DEFAULT NULL)''')
         print(f'{user} table created')
 
     if (check_table_existence(sent_history, True) == False):
@@ -49,8 +49,8 @@ def create_tables():
             (sent_id INTEGER PRIMARY KEY AUTOINCREMENT, 
             user_id INTEGER NOT NULL, 
             recipient_history_id INTEGER, 
-            conv_messages_lang CHARACTER(5) DEFAULT NULL, 
-            last_message_lang CHARACTER(5) DEFAULT NULL, 
+            conv_messages_lang TEXT DEFAULT NULL, 
+            last_message_lang TEXT DEFAULT NULL, 
             is_all_messages INTEGER DEFAULT 0,''' 
             + get_language_columns() + 
             f'''total INTEGER DEFAULT 0,
@@ -175,6 +175,7 @@ def test_get_attr_from_sent_history():
         print("fail")
 
 def update_history(sent_id, lang):
+    #increment counts for desired language
     cur.execute(f"""
             UPDATE {sent_history} SET {lang} = {lang} + 1
             WHERE sent_id = {sent_id}
@@ -186,12 +187,47 @@ def update_history(sent_id, lang):
             WHERE sent_id = {all_convos_id}
         """)
     con.commit()
+    
+    #find max for this conversation
+    row = cur.execute(f"""SELECT *
+        FROM {sent_history} 
+        WHERE sent_id = {sent_id}""").fetchone()
+    #slice 6 columns at beginning of row to only get languages
+    row_list = list(row)[6:]
+    print(row_list)
+    max_count = max(row_list)
+    lang_index = row_list.index(max_count)
+    print(lang_index)
 
+    conv_lang = "\'" + list(languages.LANGUAGES.keys())[lang_index] + "\'"
+    print(f"conv lang= {conv_lang}")
+    print(f"""
+            UPDATE {sent_history} SET conv_messages_lang = {conv_lang}
+            WHERE sent_id = {sent_id}
+        """)
 
-#def increment_count(lang, sent_id):
-    #get user id of conversation
-    #increment lang in conversation
-    #increment lang in -user_id (all messages) for ALL conversations!
+    cur.execute(f"""
+            UPDATE {sent_history} SET conv_messages_lang = {conv_lang}
+            WHERE sent_id = {sent_id}
+        """)
+    
+    #find max for all conversations
+    row = cur.execute(f"""SELECT *
+        FROM {sent_history} 
+        WHERE sent_id = {all_convos_id}""").fetchone()
+    row_list = list(row)[6:]
+    print(row_list)
+    max_count = max(row_list)
+    lang_index = row_list.index(max_count)
+    print(lang_index)
+
+    conv_lang = "\'" + list(languages.LANGUAGES.keys())[lang_index] + "\'"
+
+    cur.execute(f"""
+            UPDATE {user} SET all_messages_lang = {conv_lang}
+            WHERE user_id = {user_id}
+        """)
+    con.commit()
 
 
 def get_sent_ids(user_id):
