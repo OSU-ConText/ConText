@@ -174,6 +174,20 @@ def test_get_attr_from_sent_history():
     else:
         print("fail")
 
+def update_history(sent_id, lang):
+    cur.execute(f"""
+            UPDATE {sent_history} SET {lang} = {lang} + 1
+            WHERE sent_id = {sent_id}
+        """)
+    user_id = cur.execute(f"SELECT user_id FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()[0][0]
+    all_convos_id = -1 * user_id
+    cur.execute(f"""
+            UPDATE {sent_history} SET {lang} = {lang} + 1
+            WHERE sent_id = {all_convos_id}
+        """)
+    con.commit()
+
+
 #def increment_count(lang, sent_id):
     #get user id of conversation
     #increment lang in conversation

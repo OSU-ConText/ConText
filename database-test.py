@@ -11,6 +11,7 @@ while (not_quit):
     print('[G]et preferred language for a user')
     print('[SU] Get users for a particular sent_id')
     print('[SI] Get sent ids for a particular user_id')
+    print('[UP]date the language count for a sent_id')
     print('[Q]uit the program')
 
     user_input = input()
@@ -36,6 +37,10 @@ while (not_quit):
         user_id = input('What user_id would you like to get the sent_ids for? ')
         sent_ids = database.get_sent_ids(user_id)
         print(sent_ids)
+    elif (user_input == "UP"):
+        sent_id = input('What sent_id would you like to update?')
+        lang = input('What language would you like to update?')
+        database.update_history(sent_id, lang)
     elif (user_input == 'Q'):
         print('Thanks for stopping by!')
         not_quit = False
