@@ -3,19 +3,6 @@ from wonderwords import RandomSentence
 import msgGeneration
 import database
 
-#need database functions that can: 
-# query for a specific user, 
-# query for a specific conversation, 
-# show all conversations for a specific user
-
-def messageSimulation():
-    sendMessage()
-    return
-
-def printStats(user):
-    #read from database for a certain user
-    #format and print stats to console
-    return
 
 def sendMessage(userLanguage):
     #have user input the language they want to send a message in
