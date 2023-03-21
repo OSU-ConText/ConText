@@ -3,6 +3,10 @@ from wonderwords import RandomSentence
 import msgGeneration
 import database
 
+def printStats(user):
+    #read from database for a certain user
+    #format and print stats to console
+    return
 
 def sendMessage(userLanguage):
     #have user input the language they want to send a message in
