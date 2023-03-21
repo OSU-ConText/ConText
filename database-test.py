@@ -9,7 +9,6 @@ while (not_quit):
     print('create [U]ser')
     print('create [S]ent history')
     print('[G]et preferred language for a user')
-    print('[SU] Get users for a particular sent_id')
     print('[Q]uit the program')
 
     user_input = input()
@@ -26,11 +25,6 @@ while (not_quit):
     elif (user_input == 'G'):
         sent_id = input('What sent_id would you like to get the preferred language for?  (Keep in mind this is based off the recipient_history_id) ')
         database.get_preferred_lang(sent_id)
-    elif (user_input == 'SU'):
-        sent_id = input('What sent_id would you like to get the users for? ')
-        users = database.get_users_sent_history(sent_id)
-        print(users[0])
-        print(users[1])
     elif (user_input == 'Q'):
         print('Thanks for stopping by!')
         not_quit = False
