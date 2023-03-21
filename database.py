@@ -28,6 +28,8 @@ def check_table_existence(table_name, creating=False):
 def get_language_columns():
     str = ' INTEGER DEFAULT 0, '.join(languages.LANGUAGES.keys())
     str += ' INTEGER DEFAULT 0, '
+    
+    #character - not allowed in sqlite column names
     str = str.replace('-', '_')
     return str
 
@@ -111,3 +113,9 @@ def test_get_attr_from_message_counts():
     #get user id of conversation
     #increment lang in conversation
     #increment lang in -user_id (all messages) for ALL conversations!
+
+
+def get_sent_ids(user_id):
+    sent_ids = cur.execute(f"SELECT sent_id FROM {sent_history} WHERE user_id = {user_id}").fetchall()
+    return sent_ids[0]
+
