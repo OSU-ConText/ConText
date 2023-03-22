@@ -1,5 +1,6 @@
 import sqlite3
 import languages
+import re
 
 #variables to store name of the tables we are using
 user = "user"
@@ -283,7 +284,12 @@ def update_history(sent_id, lang):
 
 def get_sent_ids(user_id):
     sent_ids = cur.execute(f"SELECT sent_id FROM {sent_history} WHERE user_id = {user_id}").fetchall()
-    return sent_ids[0]
+    l = list(sent_ids)
+    result = []
+    for item in l:
+        result.append(item[0])
+    return result
+
 
 def get_attr_from_sent_history(desiredAttr,sent_id):
     attr = cur.execute(f"SELECT {desiredAttr} FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()
