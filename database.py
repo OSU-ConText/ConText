@@ -125,7 +125,10 @@ def create_sent_history(user_id_1, user_id_2):
                 UPDATE {sent_history} SET recipient_history_id = {recipient_id2}
                 WHERE sent_id = {recipient_id1}
             """) 
-        con.commit()       
+        con.commit()     
+
+        print('send history for user with id ' + str(user_id_1) + ' is in row with send_id ' + str(recipient_id1))  
+        print('send history for user with id ' + str(user_id_2) + ' is in row with send_id ' + str(recipient_id2))  
 
 #will return list of user ids associated with a sent id, first entry is user_id, second entry is recipient_history_id
 def get_recipient_history_id(sent_id):
