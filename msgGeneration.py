@@ -16,9 +16,8 @@ def translateMessage(destLang, srcLang, message):
     print(translated_wanted_sentence)
     return translated_wanted_sentence
 
-#todo: implement language detection function
-#todo: send/receive message functions that update db
-#todo: function to pulls all of user's stats from db and prints them out
-#above functions might need to be put in separate files
+def detectLang(message):
+    translator = Translator()
+    return translator.detect(message).lang
 
-translateMessage("fr", "en", "Hello my name is mallory")
+
