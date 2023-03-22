@@ -128,7 +128,7 @@ def create_sent_history(user_id_1, user_id_2):
         con.commit()       
 
 #will return list of user ids associated with a sent id, first entry is user_id, second entry is recipient_history_id
-def get_users_sent_history(sent_id):
+def get_recipient_history_id(sent_id):
     #verify integer is provided
     sent_id = int(sent_id)
     recipient_history_id = None
@@ -148,6 +148,32 @@ def make_lang_decision(all_lang, conv_lang, last_lang):
     print('last_lang: ' + str(last_lang))
     print('all_lang: ' + str(all_lang))
 
+    #TODO stop hard coding this
+    parameter_count = 3
+    parameter_map = {}
+    param_list = [conv_lang, last_lang, all_lang]
+    
+    for i in range(0, parameter_count):
+        if param_list[i] in parameter_map:
+            parameter_map[param_list[i]] += 1
+        else:
+            parameter_map[param_list[i]] = 1
+        print(parameter_map)
+
+    #TODO: this hardcoding is particularly bad but i just want to get this done 
+    lang = None
+
+    #tiebreaker needed
+    if len(parameter_map) == 3:
+        print("tiebreaker")
+        #arbitarily choosing the all_lang parameter for now
+        lang = all_lang
+    else:
+        lang = max(parameter_map, key=parameter_map.get)
+    print(lang)
+    return lang
+
+#this is done with the recipient's id so that on the front-end only one send_id has to be used
 def get_preferred_lang(sent_id):
     #verify integer is provided
     sent_id = int(sent_id)
@@ -184,20 +210,8 @@ def get_preferred_lang(sent_id):
         (recipient_id,),).fetchall()
         all_lang = all_lang[0][0]
 
-    #TODO Taking the three parameters, find the most common, or apply tiebreaks to choose a preferred language, and return that language
-    make_lang_decision(all_lang, conv_lang, last_lang)
-
-
-def get_attr_from_sent_history(desiredAttr,sent_id):
-    attr = cur.execute(f"SELECT {desiredAttr} FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()
-    return attr[0][0]
-
-def test_get_attr_from_sent_history():
-    uid = create_user()
-    if get_attr_from_sent_history("user_id",-1 * uid) == uid :
-        print("success")
-    else:
-        print("fail")
+    #Taking the three parameters, find the most common, or apply tiebreaks to choose a preferred language, and return that language
+    return make_lang_decision(all_lang, conv_lang, last_lang)
 
 def update_history(sent_id, lang):
     #increment counts for desired language
@@ -211,7 +225,16 @@ def update_history(sent_id, lang):
             UPDATE {sent_history} SET {lang} = {lang} + 1
             WHERE sent_id = {all_convos_id}
         """)
+
+    #set most recent language sent
+    cur.execute(f"""
+            UPDATE {sent_history} SET last_message_lang = \'{lang}\'
+            WHERE sent_id = {sent_id}
+        """)
+    
+    #commit all above changes
     con.commit()
+
     
     #find max for this conversation
     row = cur.execute(f"""SELECT *
@@ -258,4 +281,15 @@ def update_history(sent_id, lang):
 def get_sent_ids(user_id):
     sent_ids = cur.execute(f"SELECT sent_id FROM {sent_history} WHERE user_id = {user_id}").fetchall()
     return sent_ids[0]
+
+def get_attr_from_sent_history(desiredAttr,sent_id):
+    attr = cur.execute(f"SELECT {desiredAttr} FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()
+    return attr[0][0]
+
+def test_get_attr_from_sent_history():
+    uid = create_user()
+    if get_attr_from_sent_history("user_id",-1 * uid) == uid :
+        print("success")
+    else:
+        print("fail")
 
