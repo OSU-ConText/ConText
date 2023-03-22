@@ -1,5 +1,6 @@
 import sqlite3
 import languages
+import re
 
 #variables to store name of the tables we are using
 user = "user"
@@ -228,6 +229,16 @@ def update_history(sent_id, lang):
             UPDATE {sent_history} SET {lang} = {lang} + 1
             WHERE sent_id = {all_convos_id}
         """)
+    
+    #increment counts for totals
+    cur.execute(f"""
+            UPDATE {sent_history} SET total = total + 1
+            WHERE sent_id = {sent_id}
+        """)
+    cur.execute(f"""
+            UPDATE {sent_history} SET total = total + 1
+            WHERE sent_id = {all_convos_id}
+        """)
 
     #set most recent language sent
     cur.execute(f"""
@@ -283,7 +294,18 @@ def update_history(sent_id, lang):
 
 def get_sent_ids(user_id):
     sent_ids = cur.execute(f"SELECT sent_id FROM {sent_history} WHERE user_id = {user_id}").fetchall()
-    return sent_ids[0]
+    l = list(sent_ids)
+    result = []
+    for item in l:
+        result.append(item[0])
+    return result
+
+def get_users_sent_history(sent_id):
+    users = []
+    users.append(cur.execute(f"SELECT user_id FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()[0][0])
+    user2_sent_id = cur.execute(f"SELECT recipient_history_id FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()[0][0]
+    users.append(cur.execute(f"SELECT user_id FROM {sent_history} WHERE sent_id = {user2_sent_id}").fetchall()[0][0])
+    return users
 
 def get_attr_from_sent_history(desiredAttr,sent_id):
     attr = cur.execute(f"SELECT {desiredAttr} FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()

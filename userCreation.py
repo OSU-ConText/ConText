@@ -28,10 +28,8 @@ def generateMessageLanguage(user_id):
     choosenLang = random.choice(user_personas[user_id])
     print(choosenLang)
 
-#creates two users, and a conversation
-def createConversation():
-    user_one = createUser()
-    user_two = createUser()
+#creates conversation between two users
+def createConversation(user_one,user_two):
     database.create_sent_history(user_one, user_two)
 
 #send a message, update history
@@ -56,3 +54,5 @@ def sendInConversation(user_id):
     rand = random.randint(1, len(convos))
     user_generated_lang = generateMessageLanguage(user_id)
     sendMessage(rand, user_generated_lang)
+
+
