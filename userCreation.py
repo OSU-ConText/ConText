@@ -7,6 +7,10 @@ import languages
 
 #global variable to store users and their personas (languages)
 user_personas = {}
+#dictionary to store all of a user's messages (userid, list of messages)
+all_user_messages = {}
+#dictionary to store messages in a specific conversation (convoid, list of messages)
+convo_messages = {}
 
 #creates a user and their list of languages
 def createUser():
@@ -40,8 +44,8 @@ def getConversations(user_id):
     user_convos = database.get_sent_ids(user_id)
     return user_convos
 
-#return users preferred language
-def userLang(sent_id):
+#return receivers preferred language
+def receiverLang(sent_id):
     lang = database.get_preferred_lang(sent_id)
     return lang
 
