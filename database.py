@@ -178,7 +178,8 @@ def make_lang_decision(all_lang, conv_lang, last_lang):
     return lang
 
 #this is done with the recipient's id so that on the front-end only one send_id has to be used
-def get_preferred_lang(sent_id):
+#get the language your recipient needs
+def get_recipient_lang(sent_id):
     #verify integer is provided
     sent_id = int(sent_id)
     recipient_id = None
@@ -215,7 +216,12 @@ def get_preferred_lang(sent_id):
         all_lang = all_lang[0][0]
 
     #Taking the three parameters, find the most common, or apply tiebreaks to choose a preferred language, and return that language
-    return make_lang_decision(all_lang, conv_lang, last_lang)
+    lang = make_lang_decision(all_lang, conv_lang, last_lang)
+
+    if (lang == None):
+        lang = cur.execute(f"SELECT last_message_lang FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()[0][0]
+  
+    return lang
 
 def update_history(sent_id, lang):
     #increment counts for desired language
@@ -254,19 +260,12 @@ def update_history(sent_id, lang):
     row = cur.execute(f"""SELECT *
         FROM {sent_history} 
         WHERE sent_id = {sent_id}""").fetchone()
-    #slice 6 columns at beginning of row to only get languages
-    row_list = list(row)[6:]
-    print(row_list)
+    #slice 6 columns at beginning of row to only get languages, don't include total
+    row_list = list(row)[6:104]
     max_count = max(row_list)
     lang_index = row_list.index(max_count)
-    print(lang_index)
 
     conv_lang = "\'" + list(languages.LANGUAGES.keys())[lang_index] + "\'"
-    print(f"conv lang= {conv_lang}")
-    print(f"""
-            UPDATE {sent_history} SET conv_messages_lang = {conv_lang}
-            WHERE sent_id = {sent_id}
-        """)
 
     cur.execute(f"""
             UPDATE {sent_history} SET conv_messages_lang = {conv_lang}
@@ -277,11 +276,10 @@ def update_history(sent_id, lang):
     row = cur.execute(f"""SELECT *
         FROM {sent_history} 
         WHERE sent_id = {all_convos_id}""").fetchone()
-    row_list = list(row)[6:]
-    print(row_list)
+    
+    row_list = list(row)[6:104]
     max_count = max(row_list)
     lang_index = row_list.index(max_count)
-    print(lang_index)
 
     conv_lang = "\'" + list(languages.LANGUAGES.keys())[lang_index] + "\'"
 
@@ -290,6 +288,7 @@ def update_history(sent_id, lang):
             WHERE user_id = {user_id}
         """)
     con.commit()
+
 
 
 def get_sent_ids(user_id):
