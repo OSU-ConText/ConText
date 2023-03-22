@@ -81,3 +81,63 @@ def add_training_data(all_lang, conv_lang, last_lang, label):
         (all_lang, conv_lang, last_lang, label))
         database.con.commit()
     print('nice')
+
+#gets recipient history id
+def get_recipient_history_id(sent_id):
+    #verify integer is provided
+    sent_id = int(sent_id)
+    recipient_history_id = None
+
+    #Get the user ids from the sent_history table
+    if (check_table_existence(sent_history) == True):
+        recipient_history_id = database.cur.execute(f"SELECT recipient_history_id FROM {sent_history} WHERE sent_id = ?",
+        (sent_id,),).fetchall()
+        recipient_history_id = recipient_history_id[0][0]
+
+    return recipient_history_id
+
+
+
+#will make a decision based on the parameters
+def make_lang_decision(all_lang, conv_lang, last_lang):
+    #TODO Taking the three parameters, find the most common, or apply tiebreaks to choose a preferred language, and return that language
+    print('conv_lang: ' + str(conv_lang))
+    print('last_lang: ' + str(last_lang))
+    print('all_lang: ' + str(all_lang))
+
+    #TODO stop hard coding this
+    parameter_count = 3
+    parameter_map = {}
+    param_list = [conv_lang, last_lang, all_lang]
+    
+    for i in range(0, parameter_count):
+        if param_list[i] in parameter_map:
+            parameter_map[param_list[i]] += 1
+        else:
+            parameter_map[param_list[i]] = 1
+        print(parameter_map)
+
+    #TODO: this hardcoding is particularly bad but i just want to get this done 
+    lang = None
+
+    #tiebreaker needed
+    if len(parameter_map) == 3:
+        print("tiebreaker")
+        #arbitarily choosing the all_lang parameter for now
+        lang = all_lang
+    else:
+        lang = max(parameter_map, key=parameter_map.get)
+    print(lang)
+    return lang
+
+def get_attr_from_sent_history(desiredAttr,sent_id):
+    attr = database.cur.execute(f"SELECT {desiredAttr} FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()
+    return attr[0][0]
+
+def test_get_attr_from_sent_history():
+    uid = database.create_user()
+    if get_attr_from_sent_history("user_id",-1 * uid) == uid :
+        print("success")
+    else:
+        print("fail")
+

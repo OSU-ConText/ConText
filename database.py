@@ -78,51 +78,6 @@ def create_sent_history(user_id_1, user_id_2):
         print('send history for user with id ' + str(user_id_1) + ' is in row with send_id ' + str(recipient_id1))  
         print('send history for user with id ' + str(user_id_2) + ' is in row with send_id ' + str(recipient_id2))  
 
-#will return list of user ids associated with a sent id, first entry is user_id, second entry is recipient_history_id
-def get_recipient_history_id(sent_id):
-    #verify integer is provided
-    sent_id = int(sent_id)
-    recipient_history_id = None
-
-    #Get the user ids from the sent_history table
-    if (database_helper.check_table_existence(sent_history) == True):
-        recipient_history_id = cur.execute(f"SELECT recipient_history_id FROM {sent_history} WHERE sent_id = ?",
-        (sent_id,),).fetchall()
-        recipient_history_id = recipient_history_id[0][0]
-
-    return recipient_history_id
-
-#will make a decision based on the parameters
-def make_lang_decision(all_lang, conv_lang, last_lang):
-    #TODO Taking the three parameters, find the most common, or apply tiebreaks to choose a preferred language, and return that language
-    print('conv_lang: ' + str(conv_lang))
-    print('last_lang: ' + str(last_lang))
-    print('all_lang: ' + str(all_lang))
-
-    #TODO stop hard coding this
-    parameter_count = 3
-    parameter_map = {}
-    param_list = [conv_lang, last_lang, all_lang]
-    
-    for i in range(0, parameter_count):
-        if param_list[i] in parameter_map:
-            parameter_map[param_list[i]] += 1
-        else:
-            parameter_map[param_list[i]] = 1
-        print(parameter_map)
-
-    #TODO: this hardcoding is particularly bad but i just want to get this done 
-    lang = None
-
-    #tiebreaker needed
-    if len(parameter_map) == 3:
-        print("tiebreaker")
-        #arbitarily choosing the all_lang parameter for now
-        lang = all_lang
-    else:
-        lang = max(parameter_map, key=parameter_map.get)
-    print(lang)
-    return lang
 
 #this is done with the recipient's id so that on the front-end only one send_id has to be used
 #get the language your recipient needs
@@ -136,7 +91,7 @@ def get_recipient_lang(sent_id):
         print('table exists')
 
         #Get the recipient_history_id
-        recipient_history_id = get_recipient_history_id(sent_id)
+        recipient_history_id = database_helper.get_recipient_history_id(sent_id)
         print(recipient_history_id)
 
         #Get the most commonly used language by the recipient in this conversation
@@ -163,7 +118,7 @@ def get_recipient_lang(sent_id):
         all_lang = all_lang[0][0]
 
     #Taking the three parameters, find the most common, or apply tiebreaks to choose a preferred language, and return that language
-    decision_lang = make_lang_decision(all_lang, conv_lang, last_lang)
+    decision_lang = database_helper.make_lang_decision(all_lang, conv_lang, last_lang)
 
     if (decision_lang == None):
         decision_lang = cur.execute(f"SELECT last_message_lang FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()[0][0]
@@ -254,14 +209,4 @@ def get_users_sent_history(sent_id):
     users.append(cur.execute(f"SELECT user_id FROM {sent_history} WHERE sent_id = {user2_sent_id}").fetchall()[0][0])
     return users
 
-def get_attr_from_sent_history(desiredAttr,sent_id):
-    attr = cur.execute(f"SELECT {desiredAttr} FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()
-    return attr[0][0]
-
-def test_get_attr_from_sent_history():
-    uid = create_user()
-    if get_attr_from_sent_history("user_id",-1 * uid) == uid :
-        print("success")
-    else:
-        print("fail")
 
