@@ -229,6 +229,16 @@ def update_history(sent_id, lang):
             UPDATE {sent_history} SET {lang} = {lang} + 1
             WHERE sent_id = {all_convos_id}
         """)
+    
+    #increment counts for totals
+    cur.execute(f"""
+            UPDATE {sent_history} SET total = total + 1
+            WHERE sent_id = {sent_id}
+        """)
+    cur.execute(f"""
+            UPDATE {sent_history} SET total = total + 1
+            WHERE sent_id = {all_convos_id}
+        """)
 
     #set most recent language sent
     cur.execute(f"""
