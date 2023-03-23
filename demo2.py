@@ -1,17 +1,7 @@
 from googletrans import Translator
-<<<<<<< HEAD
-from wonderwords import RandomSentence
-import random
-import messageCreation
-import database
-import languages
-import userCreation
-=======
-import msgGeneration
 import random
 import database
 import languages
->>>>>>> main
 
 
 #create user 1
@@ -30,8 +20,6 @@ import languages
 #user 1 (POV: person 1) speaks english, spanish
 #user 2 (grandma) speaks vietnamese
 #user 3 (friend) speaks spanish
-<<<<<<< HEAD
-=======
 
 
 
@@ -91,4 +79,3 @@ while (not_quit):
         print('Invalid input, please try again')
 
         
->>>>>>> main
