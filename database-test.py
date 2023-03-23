@@ -27,7 +27,7 @@ while (not_quit):
         database.create_sent_history(user_id_1, user_id_2)
     elif (user_input == 'G'):
         sent_id = input('What sent_id would you like to get the preferred language for?  (Keep in mind this is based off the recipient_history_id) ')
-        database.get_preferred_lang(sent_id)
+        print(database.get_recipient_lang(sent_id))
     elif (user_input == 'SU'):
         sent_id = input('What sent_id would you like to get the users for? ')
         users = database.get_users_sent_history(sent_id)
