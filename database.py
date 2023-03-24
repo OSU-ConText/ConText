@@ -77,6 +77,9 @@ def create_sent_history(user_id_1, user_id_2):
 
         print('send history for user with id ' + str(user_id_1) + ' is in row with send_id ' + str(recipient_id1))  
         print('send history for user with id ' + str(user_id_2) + ' is in row with send_id ' + str(recipient_id2))  
+        ids = [recipient_id1, recipient_id2]
+        print(ids[0], ids[1])
+        return ids
 
 
 #this is done with the recipient's id so that on the front-end only one send_id has to be used
@@ -215,7 +218,7 @@ def get_all_sent_history_info(sent_id):
     user_id = database_helper.get_attr_from_sent_history("user_id",sent_id)
     result.update({"user_id": str(user_id)})
     result.update({"recipient_history_id": str(database_helper.get_attr_from_sent_history("recipient_history_id",sent_id))})
-    result.update({"all_messages_lang": database_helper.get_attr_from_user("all_messages_lang",sent_id)})
+    result.update({"all_messages_lang": database_helper.get_attr_from_user("all_messages_lang",user_id)})
     result.update({"conv_messages_lang": database_helper.get_attr_from_sent_history("conv_messages_lang",sent_id)})
     result.update({"last_message_lang": database_helper.get_attr_from_sent_history("last_message_lang",sent_id)})
     result.update({"is_all_messages": str(bool(database_helper.get_attr_from_sent_history("is_all_messages",sent_id)))})
