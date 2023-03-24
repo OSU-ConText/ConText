@@ -27,4 +27,3 @@ def generateConvos(user_personas):
 def sendInConvo(user_personas, sentId):
     lang = userCreation.generateMessageLanguage(user_personas)
     userCreation.sendMessage(sentId, lang)
-
