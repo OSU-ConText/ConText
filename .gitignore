@@ -168,3 +168,5 @@ cython_debug/
 !.vscode/extensions.json
 !.vscode/.gitignore
 !.vscode/settings.json
+
+context.db
