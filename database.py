@@ -81,12 +81,9 @@ def create_sent_history(user_id_1, user_id_2):
         ids = [recipient_id1, recipient_id2]
         print(ids[0], ids[1])
         return ids
-<<<<<<< HEAD
     else:
         print("conversation already exists")
         return None
-=======
->>>>>>> main
 
 
 #this is done with the recipient's id so that on the front-end only one send_id has to be used
