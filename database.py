@@ -209,4 +209,22 @@ def get_users_sent_history(sent_id):
     users.append(cur.execute(f"SELECT user_id FROM {sent_history} WHERE sent_id = {user2_sent_id}").fetchall()[0][0])
     return users
 
+def get_all_sent_history_info(sent_id):
+    result = {}
+    result.update({"sent_id": database_helper.get_attr_from_sent_history("sent_id",str(sent_id))})
+    result.update({"user_id": database_helper.get_attr_from_sent_history("user_id",str(sent_id))})
+    result.update({"recipient_history_id": database_helper.get_attr_from_sent_history("recipient_history_id",str(sent_id))})
+    result.update({"conv_messages_lang": database_helper.get_attr_from_sent_history("conv_messages_lang",sent_id)})
+    result.update({"last_message_lang": database_helper.get_attr_from_sent_history("last_message_lang",sent_id)})
+    result.update({"is_all_messages": database_helper.get_attr_from_sent_history("is_all_messages",bool(sent_id))})
+    result.update({"total": database_helper.get_attr_from_sent_history("total",str(sent_id))})
+    row = cur.execute(f"SELECT * FROM {sent_history} WHERE sent_id = {sent_id}").fetchone()
+    language_counts = list(row)[6:104]
+    language_names = list(languages.LANGUAGES.keys())
+    for x in range(len(language_counts)):
+        if language_counts[x] != 0:
+            result.update({language_names[x]: str(language_counts[x])})
+
+    return result
+
 

@@ -134,10 +134,5 @@ def get_attr_from_sent_history(desiredAttr,sent_id):
     attr = database.cur.execute(f"SELECT {desiredAttr} FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()
     return attr[0][0]
 
-def test_get_attr_from_sent_history():
-    uid = database.create_user()
-    if get_attr_from_sent_history("user_id",-1 * uid) == uid :
-        print("success")
-    else:
-        print("fail")
+
 
