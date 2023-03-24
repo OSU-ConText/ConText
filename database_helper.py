@@ -133,6 +133,9 @@ def make_lang_decision(all_lang, conv_lang, last_lang):
 def get_attr_from_sent_history(desiredAttr,sent_id):
     attr = database.cur.execute(f"SELECT {desiredAttr} FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()
     return attr[0][0]
+def get_attr_from_user(desiredAttr,user_id):
+    attr = database.cur.execute(f"SELECT {desiredAttr} FROM {user} WHERE user_id = {user_id}").fetchall()
+    return attr[0][0]
 
 
 
