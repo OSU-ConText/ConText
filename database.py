@@ -49,7 +49,8 @@ def create_sent_history(user_id_1, user_id_2):
     user_id_1 = int(user_id_1)
     user_id_2 = int(user_id_2)
 
-    if (database_helper.check_table_existence(sent_history) == True):
+    if (database_helper.check_table_existence(sent_history) == True 
+        and not database_helper.check_conversation_exists(user_id_1, user_id_2)):
 
         #insert first row, user_id_1 history being recorded
         cur.execute(f"""
@@ -80,6 +81,9 @@ def create_sent_history(user_id_1, user_id_2):
         ids = [recipient_id1, recipient_id2]
         print(ids[0], ids[1])
         return ids
+    else:
+        print("conversation already exists")
+        return None
 
 
 #this is done with the recipient's id so that on the front-end only one send_id has to be used

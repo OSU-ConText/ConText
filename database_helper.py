@@ -137,5 +137,14 @@ def get_attr_from_user(desiredAttr,user_id):
     attr = database.cur.execute(f"SELECT {desiredAttr} FROM {user} WHERE user_id = {user_id}").fetchall()
     return attr[0][0]
 
+def check_conversation_exists(user_id_1, user_id_2):
+    for sid in database.get_sent_ids(user_id_1):
+        recipient = get_attr_from_sent_history("recipient_history_id", sid)
+        if (user_id_2 == get_attr_from_sent_history("user_id", recipient)):
+            return 1
+    return 0
+
+    
+
 
 

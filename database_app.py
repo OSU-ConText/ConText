@@ -22,12 +22,13 @@ while (not_quit):
     if (user_input == 'C'):
         database_helper.create_tables()
     elif (user_input == 'U'):
-        print("user_id = ",database.create_user())
+        database.create_user()
     elif (user_input == 'S'):
         user_id_1 = input('What is the first user_id? ')
         user_id_2 = input('What is the second user_id? ')
         ids = database.create_sent_history(user_id_1, user_id_2)
-        print("sent_id = ", ids[0], "receiver_history_id = ", ids[1])
+        if ids != None:
+            print("sent_id = ", ids[0], "receiver_history_id = ", ids[1])
     elif (user_input == 'G'):
         sent_id = input('What sent_id would you like to get the preferred language for?  (Keep in mind this is based off the recipient_history_id) ')
         print(database.get_recipient_lang(sent_id))
