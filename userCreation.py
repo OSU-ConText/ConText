@@ -1,6 +1,7 @@
 from googletrans import Translator
 from wonderwords import RandomSentence
 import random
+import database_helper
 import database
 import languages
 
@@ -13,7 +14,6 @@ def createUserPersona(user_id):
     for i in range(num_languages):
         user_langs.insert(i, random.choice(list(languages.LANGUAGES.keys())))
     user_personas[user_id] = user_langs
-    #print(user_personas)
 
 
 #creates a user and their list of languages
@@ -26,11 +26,8 @@ def createUser():
 def generateMessageLanguage(user_id):
     createUserPersona(user_id)
     persona = (user_personas[user_id])
-    #print(persona)
     users_langs = user_personas[user_id]
     choosenLang = random.choice(users_langs)
-    #print("Choosen lang: " + choosenLang)
-    #print(choosenLang)
     return choosenLang
 
 #creates conversation between two users
@@ -56,41 +53,47 @@ def receiverLang(sent_id):
 
 #finds all of a given users conversations, chooses a random conversation to send a message in
 #sends a message in a randomly generated language
-def sendInConversation(user_id):
-    convos = getConversations(user_id)
-    #print("all convos: ")
-    #for i in range(len(convos)):
-        #print(convos[i])
-    conversation_id = random.choice(convos)
-    while conversation_id < 0:
-        conversation_id = random.choice(convos)
-    #print("convo id: " + str(conversation_id))
-    user_generated_lang = generateMessageLanguage(user_id)
-    print("user id: " + str(user_id))
-    sendMessage(conversation_id, user_generated_lang)
+def sendInConversation(convoId, user_generated_lang):
+    sendMessage(convoId, user_generated_lang)
+
+def checkLangForDashes(lang):
+    if "-" in lang:
+        newString = lang.replace("-", "_")
+        return newString
+    else:
+        return lang
 
 #Starts multiple conversations for each user
 def generateConversations():
-    #one possible method:
-    #store user ids in an dict with values being their languages
-    #iterate thru and randomly assign each user to 2 other users and start 2 conversations:
-    #e.g. assign user 1 to user 2 and 3, then have a convo between user 1 and user 2,
-    #then user 1 and user 3, etc.
-    #if convo already exists between two users, assign them a different user
 
+    #create 10 users (find a way to pass in a value so we can choose num users?)
     for i in range(10):
         createUser()
 
+    #create conversations between users
     for i, user1 in enumerate(user_personas):
         for user2 in (list(user_personas.keys())[i+1:]):
             createConversation(user1, user2)
     
-    for i in range(2):
-        for user in user_personas:
-            print("Sending a message from front end")
-            sendInConversation(user)
+    #find all user ids
+    user_ids = user_personas.keys()
+    #iterate through all users
+    for id in user_ids:
+        #find one of their conversations
+        convos = getConversations(id)
+        pos_convos = [ele for ele in convos if ele > 0]
+        #iterate through actual convos (with positive sent_ids in table)
+        for i in range(len(pos_convos)):
+            #send between 1 and 5 messages in the convo
+            user_generated_lang = generateMessageLanguage(id)
+            #remove dashes (if needed) for sqlite constraint
+            user_generated_lang_no_dash = checkLangForDashes(user_generated_lang)
+            rand = random.randint(1,5)
+            for i in range(rand):
+                sendInConversation(pos_convos[i], user_generated_lang_no_dash)
 
 if __name__ == '__main__':
+    database_helper.create_tables()
     generateConversations()
 
     
