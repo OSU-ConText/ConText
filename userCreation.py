@@ -36,8 +36,6 @@ def createConversation(user_one,user_two):
 
 #send a message, update history
 def sendMessage(sent_id, lang):
-    print("convo id: " + str(sent_id))
-    print("convo lang: " + lang)
     database.update_history(sent_id, lang)
 
 #return all conversations for a user
