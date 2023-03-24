@@ -51,8 +51,42 @@ def receiverLang(sent_id):
 #sends a message in a randomly generated language
 def sendInConversation(user_id):
     convos = getConversations(user_id)
-    rand = random.randint(1, len(convos))
+    # rand = random.randint(1, len(convos))
+    conversation_id = convos[1]
+    print("*****")
+    print(user_id)
+    print(conversation_id)
+    print("*****")
     user_generated_lang = generateMessageLanguage(user_id)
-    sendMessage(rand, user_generated_lang)
+    sendMessage(conversation_id, user_generated_lang)
 
+#Starts multiple conversations for each user
+def generateConversations():
+    #one possible method:
+    #store user ids in an dict with values being their languages
+    #iterate thru and randomly assign each user to 2 other users and start 2 conversations:
+    #e.g. assign user 1 to user 2 and 3, then have a convo between user 1 and user 2,
+    #then user 1 and user 3, etc.
+    #if convo already exists between two users, assign them a different user
+
+    for i in range(10):
+        createUser()
+
+    for i, user1 in enumerate(user_personas):
+        for user2 in (list(user_personas.keys())[i+1:]):
+            createConversation(user1, user2)
+            # sendInConversation(user1)
+
+    # for user in user_personas:
+    #     sendInConversation(user)
+
+if __name__ == '__main__':
+    generateConversations()
+
+    
+        
+
+
+
+    
 
