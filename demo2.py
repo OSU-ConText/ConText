@@ -1,4 +1,5 @@
 from googletrans import Translator
+import messageCreation
 import random
 import database
 import languages
@@ -47,8 +48,8 @@ while (not_quit):
         database.create_sent_history(user_id_1, user_id_2)
     elif (user_input == 'P'):
         sent_id = input('what sent_id would you like to gather data from\n')
-        history = database.get_attr_from_sent_history('*',sent_id)
-        print (history)
+        history = database.get_all_sent_history_info(sent_id)
+        print(history)
     elif (user_input == 'SU'):
         sent_id = input('What sent_id would you like to get the users for? ')
         users = database.get_users_sent_history(sent_id)
@@ -63,7 +64,11 @@ while (not_quit):
     #sent typed message in specified language with sent_id entered by user
     elif(user_input == 'T'):
         sent_id = input("\nwhat sent_id would you like to sent the message to\n")
-        text_message = input("Type the message you want to send in English\n")
+        user_input = input("Do you want to [G]enerate a random message or [T]ype a message\n")
+        if (user_input == "T"):
+            text_message = input("Type the message you want to send in English\n")
+        else:
+            text_message = messageCreation.generateMessage()
         lang = input("What language would you like to send the message in\n")
         sent_message = translator.translate(text_message,dest=lang).text
         print("\nThe sentence you sent is:\n" + sent_message + "\n")
