@@ -172,12 +172,8 @@ def update_history(sent_id, lang):
         WHERE sent_id = {sent_id}""").fetchone()
     #slice 6 columns at beginning of row to only get languages, don't include total
     row_list = list(row)[6:111]
-    #print(row_list)
     max_count = max(row_list)
-    #print(max_count)
     lang_index = row_list.index(max_count)
-    #print(lang_index)
-    #print(list(languages.LANGUAGES.keys())[lang_index])
 
     conv_lang = "\'" + list(languages.LANGUAGES.keys())[lang_index] + "\'"
 
