@@ -209,6 +209,7 @@ def get_sent_ids(user_id):
         result.append(item[0])
     return result
 
+#get the 2 users in a conversation
 def get_users_sent_history(sent_id):
     users = []
     users.append(cur.execute(f"SELECT user_id FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()[0][0])

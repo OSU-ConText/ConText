@@ -17,6 +17,58 @@ def test_get_attr_from_sent_history_1():
     assert database_helper.get_attr_from_sent_history("conv_messages_lang",sid[0]) == 'af'
     assert database_helper.get_attr_from_sent_history("last_message_lang",sid[0]) == 'af'
 
+def test_get_sent_ids():
+    uid1 = database.create_user()
+    uid2 = database.create_user()
+    uid3 = database.create_user()
+    uid4 = database.create_user()
+    uid5 = database.create_user()
+    sid1 = database.create_sent_history(uid1, uid2)[0]
+    sid2 = database.create_sent_history(uid1, uid3)[0]
+    sid3 = database.create_sent_history(uid1, uid4)[0]
+    sid4 = database.create_sent_history(uid1, uid5)[0]
+    ids = database.get_sent_ids(uid1)
+    assert ids == [-uid1, sid1, sid2, sid3, sid4]
+
+def test_get_sent_ids_1():
+    uid1 = database.create_user()
+    ids = database.get_sent_ids(uid1)
+    assert ids == [-uid1]
+
+def test_get_sent_ids_2():
+    uid1 = database.create_user()
+    uid2 = database.create_user()
+    uid3 = database.create_user()
+    uid4 = database.create_user()
+    uid5 = database.create_user()
+    sid1 = database.create_sent_history(uid1, uid2)[0]
+    sid2 = database.create_sent_history(uid2, uid3)
+    sid3 = database.create_sent_history(uid2, uid4)
+    sid4 = database.create_sent_history(uid2, uid5)
+    ids = database.get_sent_ids(uid1)
+    assert ids == [-uid1, sid1]
+
+def test_get_users_sent_history():
+    uid1 = database.create_user()
+    uid2 = database.create_user()
+    sid1 = database.create_sent_history(uid1, uid2)
+    assert database.get_users_sent_history(sid1[0]) == [uid1, uid2]
+    assert database.get_users_sent_history(sid1[1]) == [uid2, uid1]
+
+def test_get_users_sent_history_1():
+    uid1 = database.create_user()
+    uid2 = database.create_user()
+    uid3 = database.create_user()
+    uid4 = database.create_user()
+    uid5 = database.create_user()
+    sid1 = database.create_sent_history(uid1, uid2)
+    sid2 = database.create_sent_history(uid2, uid3)
+    sid3 = database.create_sent_history(uid1, uid4)
+    sid4 = database.create_sent_history(uid3, uid5)
+    assert database.get_users_sent_history(sid1[0]) == [uid1, uid2]
+    assert database.get_users_sent_history(sid2[0]) == [uid2, uid3]
+    assert database.get_users_sent_history(sid3[0]) == [uid1, uid4]
+    assert database.get_users_sent_history(sid4[0]) == [uid3, uid5]
 
 #test with one convo
 def test_get_all_sent_history_info_1():
