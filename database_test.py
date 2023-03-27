@@ -5,6 +5,19 @@ def test_get_attr_from_sent_history():
     uid = database.create_user()
     assert database_helper.get_attr_from_sent_history("user_id",-1 * uid) == uid 
 
+def test_get_attr_from_sent_history_1():
+    uid = database.create_user()
+    sid = database.create_sent_history(uid, 1)
+    database.update_history(sid[0], "af")
+    assert database_helper.get_attr_from_sent_history("user_id",sid[0]) == uid
+    assert database_helper.get_attr_from_sent_history("sent_id",sid[0]) == sid[0]
+    assert database_helper.get_attr_from_sent_history("recipient_history_id",sid[0]) == sid[1]
+    assert database_helper.get_attr_from_sent_history("af",sid[0]) == 1
+    assert database_helper.get_attr_from_sent_history("en",sid[0]) == 0
+    assert database_helper.get_attr_from_sent_history("conv_messages_lang",sid[0]) == 'af'
+    assert database_helper.get_attr_from_sent_history("last_message_lang",sid[0]) == 'af'
+
+
 #test with one convo
 def test_get_all_sent_history_info_1():
     user_id = database.create_user()
