@@ -41,7 +41,7 @@ def create_user():
         (sent_id, user_id, sent_id))
         con.commit()
 
-    print(f"added user", (user_id))
+    #print(f"added user", (user_id))
     return user_id
 
 def create_sent_history(user_id_1, user_id_2):
@@ -76,10 +76,10 @@ def create_sent_history(user_id_1, user_id_2):
             """) 
         con.commit()     
 
-        print('send history for user with id ' + str(user_id_1) + ' is in row with send_id ' + str(recipient_id1))  
-        print('send history for user with id ' + str(user_id_2) + ' is in row with send_id ' + str(recipient_id2))  
+        #print('send history for user with id ' + str(user_id_1) + ' is in row with send_id ' + str(recipient_id1))  
+        #print('send history for user with id ' + str(user_id_2) + ' is in row with send_id ' + str(recipient_id2))  
         ids = [recipient_id1, recipient_id2]
-        print(ids[0], ids[1])
+        #print(ids[0], ids[1])
         return ids
     else:
         print("conversation already exists")
@@ -95,11 +95,11 @@ def get_recipient_lang(sent_id):
 
     #First we will check the sent_history table to get the recipients conv_messages_lang and last_message_lang, and also to get the recipients user_id 
     if (database_helper.check_table_existence(sent_history) == True):
-        print('table exists')
+        #print('table exists')
 
         #Get the recipient_history_id
         recipient_history_id = database_helper.get_recipient_history_id(sent_id)
-        print(recipient_history_id)
+        #print(recipient_history_id)
 
         #Get the most commonly used language by the recipient in this conversation
         conv_lang = cur.execute(f"SELECT conv_messages_lang FROM {sent_history} WHERE sent_id = ?",
@@ -117,7 +117,7 @@ def get_recipient_lang(sent_id):
         recipient_id = recipient_id[0][0]
 
     if (database_helper.check_table_existence(user) == True):
-        print('table exists')
+        #print('table exists')
 
         #Get the most commonly used language of all messages sent by the recipient of this message
         all_lang = cur.execute(f"SELECT all_messages_lang FROM {user} WHERE user_id = ?",
@@ -171,7 +171,7 @@ def update_history(sent_id, lang):
         FROM {sent_history} 
         WHERE sent_id = {sent_id}""").fetchone()
     #slice 6 columns at beginning of row to only get languages, don't include total
-    row_list = list(row)[6:104]
+    row_list = list(row)[6:111]
     max_count = max(row_list)
     lang_index = row_list.index(max_count)
 
@@ -187,7 +187,7 @@ def update_history(sent_id, lang):
         FROM {sent_history} 
         WHERE sent_id = {all_convos_id}""").fetchone()
     
-    row_list = list(row)[6:104]
+    row_list = list(row)[6:111]
     max_count = max(row_list)
     lang_index = row_list.index(max_count)
 
@@ -229,7 +229,7 @@ def get_all_sent_history_info(sent_id):
     result.update({"is_all_messages": str(bool(database_helper.get_attr_from_sent_history("is_all_messages",sent_id)))})
     result.update({"total": str(database_helper.get_attr_from_sent_history("total",str(sent_id)))})
     row = cur.execute(f"SELECT * FROM {sent_history} WHERE sent_id = {sent_id}").fetchone()
-    language_counts = list(row)[6:104]
+    language_counts = list(row)[6:111]
     language_names = list(languages.LANGUAGES.keys())
     for x in range(len(language_counts)):
         if language_counts[x] != 0:

@@ -86,8 +86,8 @@ def generateConversations():
             user_generated_lang = generateMessageLanguage(id)
             #remove dashes (if needed) for sqlite constraint
             user_generated_lang_no_dash = checkLangForDashes(user_generated_lang)
-            rand = random.randint(1,5)
-            for i in range(rand):
+            rand = random.randint(10, 20)
+            for j in range(rand):
                 sendInConversation(pos_convos[i], user_generated_lang_no_dash)
 
 if __name__ == '__main__':

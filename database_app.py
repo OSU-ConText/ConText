@@ -22,12 +22,15 @@ while (not_quit):
 
     if (user_input == 'C'):
         database_helper.create_tables()
+        print('tables created')
     elif (user_input == 'U'):
         database.create_user()
+        print('user created')
     elif (user_input == 'S'):
         user_id_1 = input('What is the first user_id? ')
         user_id_2 = input('What is the second user_id? ')
         ids = database.create_sent_history(user_id_1, user_id_2)
+        print('sent history created')
         if ids != None:
             print("sent_id = ", ids[0], "receiver_history_id = ", ids[1])
     elif (user_input == 'G'):
