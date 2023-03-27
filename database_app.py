@@ -14,6 +14,7 @@ while (not_quit):
     print('[SU] Get users for a particular sent_id')
     print('[SI] Get sent ids for a particular user_id')
     print('[UP]date the language count for a sent_id')
+    print('[GAFU] Get attribute from user')
     print('[Q]uit the program')
 
     user_input = input()
@@ -51,6 +52,12 @@ while (not_quit):
         print('before update: ',database.get_all_sent_history_info(sent_id))
         database.update_history(sent_id, lang)
         print('after update: ',database.get_all_sent_history_info(sent_id))
+    elif (user_input == "GAFU"):
+        desired_attr = input("What is your desired attribute?")
+        user_id = input("What user_id would you like to query?")
+        user_id = int(user_id)
+        result = database_helper.get_attr_from_user(desired_attr, user_id)
+        print(result)
     elif (user_input == 'Q'):
         print('Thanks for stopping by!')
         not_quit = False

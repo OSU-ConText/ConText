@@ -1,6 +1,158 @@
 import database
 import database_helper
 
+def test_create_user():
+    user_id = database.create_user()
+    user_exists = database_helper.get_attr_from_user("user_id", user_id)
+
+    assert user_exists == user_id
+
+def test_create_user_fail():
+    user_id = database.create_user()
+    user_exists = database_helper.get_attr_from_user("user_id", user_id + 1)
+
+    assert user_exists == None
+
+def test_create_user_fail_2():
+    #create two users to guarantee that the second user we create will not have a user_id of 1
+    database.create_user()
+    user_id = database.create_user()
+    user_exists = database_helper.get_attr_from_user("user_id", 1)
+
+    assert user_exists != user_id
+
+def test_create_sent_history():
+    user_id_1 = database.create_user()
+    user_id_2 = database.create_user()
+
+    sent_ids = database.create_sent_history(user_id_1, user_id_2)
+    sent_id_1 = sent_ids[0]
+    sent_id_2 = sent_ids[1]
+
+    sent_exists_1 = database_helper.get_attr_from_sent_history("sent_id", sent_id_1)
+    sent_exists_2 = database_helper.get_attr_from_sent_history("sent_id", sent_id_2)
+
+    assert sent_exists_1 == sent_id_1
+    assert sent_exists_2 == sent_id_2
+
+def test_create_sent_history_fail():
+    user_id_1 = database.create_user()
+    user_id_2 = database.create_user()
+
+    sent_ids = database.create_sent_history(user_id_1, user_id_2)
+    sent_id_1 = sent_ids[0] + 2
+    sent_id_2 = sent_ids[1] + 1
+
+    sent_exists_1 = database_helper.get_attr_from_sent_history("sent_id", sent_id_1)
+    sent_exists_2 = database_helper.get_attr_from_sent_history("sent_id", sent_id_2)
+
+    assert sent_exists_1 == None
+    assert sent_exists_2 == None
+
+def test_create_sent_history_fail_2():
+    user_id_1 = database.create_user()
+    user_id_2 = database.create_user()
+    user_id_3 = database.create_user()
+    user_id_4 = database.create_user()
+
+    sent_ids = database.create_sent_history(user_id_1, user_id_2)
+    sent_id_1 = sent_ids[0]
+    sent_id_2 = sent_ids[1]
+
+    sent_ids = database.create_sent_history(user_id_3, user_id_4)
+    sent_id_3 = sent_ids[0]
+    sent_id_4 = sent_ids[1]
+
+    sent_exists_1 = database_helper.get_attr_from_sent_history("sent_id", sent_id_1)
+    sent_exists_2 = database_helper.get_attr_from_sent_history("sent_id", sent_id_2)
+
+    assert sent_exists_1 != sent_id_3
+    assert sent_exists_1 != sent_id_4
+    assert sent_exists_2 != sent_id_3
+    assert sent_exists_2 != sent_id_4
+
+#set all parameters to one language
+def test_get_pref_lang_simple():
+    user_id_1 = database.create_user()
+    user_id_2 = database.create_user()
+
+    sent_ids = database.create_sent_history(user_id_1, user_id_2)
+    sent_id = sent_ids[0]
+
+    database.update_history(sent_id, "en")
+
+    recipient_id = sent_ids[1]
+
+    assert database.get_recipient_lang(recipient_id) == "en"
+
+#set the two conversation params to one lang and the all_messages param to another
+def test_get_pref_lang_majority():
+    user_id_1 = database.create_user()
+    user_id_2 = database.create_user()
+
+    sent_ids = database.create_sent_history(user_id_1, user_id_2)
+    sent_id = sent_ids[0]
+
+    database.update_history(sent_id, "en")
+    database.update_history(sent_id, "en")
+
+    user_id_3 = database.create_user()
+    sent_ids = database.create_sent_history(user_id_1, user_id_3)
+    sent_id = sent_ids[0]
+
+    database.update_history(sent_id, "fr")
+
+    recipient_id = sent_ids[1]
+
+    assert database.get_recipient_lang(recipient_id) == "fr"
+
+#set one of the conversation and the all_messages param to one lang, set the other conversation param to another lang
+def test_get_pref_lang_majority_2():
+    user_id_1 = database.create_user()
+    user_id_2 = database.create_user()
+
+    sent_ids = database.create_sent_history(user_id_1, user_id_2)
+    sent_id = sent_ids[0]
+
+    database.update_history(sent_id, "en")
+    database.update_history(sent_id, "en")
+
+    user_id_3 = database.create_user()
+    sent_ids = database.create_sent_history(user_id_1, user_id_3)
+    sent_id = sent_ids[0]
+
+    database.update_history(sent_id, "fr")
+    database.update_history(sent_id, "fr")
+    database.update_history(sent_id, "en")
+
+    recipient_id = sent_ids[1]
+
+    assert database.get_recipient_lang(recipient_id) == "en"
+
+#set three parameters to different value, rely on all langs tiebreaker
+def test_get_pref_lang_tiebreak():
+    user_id_1 = database.create_user()
+    user_id_2 = database.create_user()
+
+    sent_ids = database.create_sent_history(user_id_1, user_id_2)
+    sent_id = sent_ids[0]
+
+    database.update_history(sent_id, "en")
+    database.update_history(sent_id, "en")
+    database.update_history(sent_id, "en")
+
+    user_id_3 = database.create_user()
+    sent_ids = database.create_sent_history(user_id_1, user_id_3)
+    sent_id = sent_ids[0]
+
+    database.update_history(sent_id, "fr")
+    database.update_history(sent_id, "fr")
+    database.update_history(sent_id, "de")
+
+    recipient_id = sent_ids[1]
+
+    assert database.get_recipient_lang(recipient_id) == "en"
+
 def test_get_attr_from_sent_history():
     uid = database.create_user()
     assert database_helper.get_attr_from_sent_history("user_id",-1 * uid) == uid 
