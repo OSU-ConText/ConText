@@ -41,7 +41,7 @@ def create_user():
         (sent_id, user_id, sent_id))
         con.commit()
 
-    print(f"added user", (user_id))
+    #print(f"added user", (user_id))
     return user_id
 
 def create_sent_history(user_id_1, user_id_2):
@@ -76,10 +76,10 @@ def create_sent_history(user_id_1, user_id_2):
             """) 
         con.commit()     
 
-        print('send history for user with id ' + str(user_id_1) + ' is in row with send_id ' + str(recipient_id1))  
-        print('send history for user with id ' + str(user_id_2) + ' is in row with send_id ' + str(recipient_id2))  
+        #print('send history for user with id ' + str(user_id_1) + ' is in row with send_id ' + str(recipient_id1))  
+        #print('send history for user with id ' + str(user_id_2) + ' is in row with send_id ' + str(recipient_id2))  
         ids = [recipient_id1, recipient_id2]
-        print(ids[0], ids[1])
+        #print(ids[0], ids[1])
         return ids
     else:
         print("conversation already exists")
@@ -95,11 +95,11 @@ def get_recipient_lang(sent_id):
 
     #First we will check the sent_history table to get the recipients conv_messages_lang and last_message_lang, and also to get the recipients user_id 
     if (database_helper.check_table_existence(sent_history) == True):
-        print('table exists')
+        #print('table exists')
 
         #Get the recipient_history_id
         recipient_history_id = database_helper.get_recipient_history_id(sent_id)
-        print(recipient_history_id)
+        #print(recipient_history_id)
 
         #Get the most commonly used language by the recipient in this conversation
         conv_lang = cur.execute(f"SELECT conv_messages_lang FROM {sent_history} WHERE sent_id = ?",
@@ -117,7 +117,7 @@ def get_recipient_lang(sent_id):
         recipient_id = recipient_id[0][0]
 
     if (database_helper.check_table_existence(user) == True):
-        print('table exists')
+        #print('table exists')
 
         #Get the most commonly used language of all messages sent by the recipient of this message
         all_lang = cur.execute(f"SELECT all_messages_lang FROM {user} WHERE user_id = ?",
