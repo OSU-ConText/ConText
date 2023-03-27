@@ -48,7 +48,9 @@ while (not_quit):
     elif (user_input == "UP"):
         sent_id = input('What sent_id would you like to update?')
         lang = input('What language would you like to update?')
+        print('before update: ',database.get_all_sent_history_info(sent_id))
         database.update_history(sent_id, lang)
+        print('after update: ',database.get_all_sent_history_info(sent_id))
     elif (user_input == 'Q'):
         print('Thanks for stopping by!')
         not_quit = False

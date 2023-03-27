@@ -17,6 +17,44 @@ def test_get_attr_from_sent_history_1():
     assert database_helper.get_attr_from_sent_history("conv_messages_lang",sid[0]) == 'af'
     assert database_helper.get_attr_from_sent_history("last_message_lang",sid[0]) == 'af'
 
+def test_update_history():
+    uid1 = database.create_user()
+    uid2 = database.create_user()
+    info = database.get_all_sent_history_info(-uid1)
+    assert info.get("sent_id") == str(-uid1)
+    assert info.get("user_id") == str(uid1)
+    assert info.get("recipient_history_id") == str(-uid1)
+    assert info.get("conv_messages_lang") == None
+    assert info.get("all_messages_lang") == None
+    assert info.get("last_message_lang") == None
+    assert info.get("is_all_messages") == "True"
+    assert info.get("total") == str(0)
+    ids = database.create_sent_history(uid1, uid2)
+    database.update_history(ids[0], 'en')
+    info = database.get_all_sent_history_info(ids[0])
+    assert info.get("sent_id") == str(ids[0])
+    assert info.get("user_id") == str(uid1)
+    assert info.get("recipient_history_id") == str(ids[1])
+    assert info.get("conv_messages_lang") == "en"
+    assert info.get("all_messages_lang") == "en"
+    assert info.get("last_message_lang") == "en"
+    assert info.get("is_all_messages") == "False"
+    assert info.get("en") == str(1)
+    assert info.get("total") == str(1)
+    database.update_history(ids[0], 'fr')
+    database.update_history(ids[0], 'en')
+    info = database.get_all_sent_history_info(ids[0])
+    assert info.get("sent_id") == str(ids[0])
+    assert info.get("user_id") == str(uid1)
+    assert info.get("recipient_history_id") == str(ids[1])
+    assert info.get("conv_messages_lang") == "en"
+    assert info.get("all_messages_lang") == "en"
+    assert info.get("last_message_lang") == "en"
+    assert info.get("is_all_messages") == "False"
+    assert info.get("en") == str(2)
+    assert info.get("fr") == str(1)
+    assert info.get("total") == str(3)
+
 def test_get_sent_ids():
     uid1 = database.create_user()
     uid2 = database.create_user()

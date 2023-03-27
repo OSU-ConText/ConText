@@ -13,8 +13,8 @@ def check_table_existence(table_name, creating=False):
     if (not table_exists and creating == False):
         print(f"The {table_name} table does not exist, please create it first!")
 
-    if (table_exists and creating == True):
-        print(f"{table_name} table already exists!")
+    #if (table_exists and creating == True):
+        #print(f"{table_name} table already exists!")
 
     return table_exists
 
@@ -30,14 +30,14 @@ def get_language_columns():
 #Will create the needed tables if they do not already exist
 def create_tables():
     if (check_table_existence(user, True) == False):
-        print(f'creating {user} table')
+        #print(f'creating {user} table')
         database.cur.execute(f'''CREATE TABLE {user}
             (user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
             all_messages_lang TEXT DEFAULT NULL)''')
-        print(f'{user} table created')
+        #print(f'{user} table created')
 
     if (check_table_existence(sent_history, True) == False):
-        print(f'creating {sent_history} table')
+        #print(f'creating {sent_history} table')
         database.cur.execute(f'''CREATE TABLE {sent_history}
             (sent_id INTEGER PRIMARY KEY AUTOINCREMENT, 
             user_id INTEGER NOT NULL, 
@@ -49,16 +49,16 @@ def create_tables():
             f'''total INTEGER DEFAULT 0,
             FOREIGN KEY(user_id) REFERENCES {user}(user_id),
             FOREIGN KEY(recipient_history_id) REFERENCES {sent_history}(sent_id))''')
-        print(f'{sent_history} table created')
+        #print(f'{sent_history} table created')
 
     if (check_table_existence(training_data, True) == False):
-        print(f'creating {training_data} table')
+        #print(f'creating {training_data} table')
         database.cur.execute(f'''CREATE TABLE {training_data}
             (all_messages_lang TEXT,
             conv_messages_lang TEXT, 
             last_message_lang TEXT,
             label TEXT)''')
-        print(f'{training_data} table created')
+        #print(f'{training_data} table created')
 
 
 
@@ -69,7 +69,7 @@ def delete_tables():
         database.cur.execute("DROP TABLE sent_history")
     if (check_table_existence(training_data, True) == True):
         database.cur.execute("DROP TABLE training_data")
-    print("Table dropped... ")
+    #("Table dropped... ")
     database.con.commit()
 
 def add_training_data(all_lang, conv_lang, last_lang, label):
@@ -80,7 +80,7 @@ def add_training_data(all_lang, conv_lang, last_lang, label):
             (?, ?, ?, ? )""", 
         (all_lang, conv_lang, last_lang, label))
         database.con.commit()
-    print('nice')
+    #print('nice')
 
 #gets recipient history id
 def get_recipient_history_id(sent_id):
@@ -101,9 +101,9 @@ def get_recipient_history_id(sent_id):
 #will make a decision based on the parameters
 def make_lang_decision(all_lang, conv_lang, last_lang):
     #TODO Taking the three parameters, find the most common, or apply tiebreaks to choose a preferred language, and return that language
-    print('conv_lang: ' + str(conv_lang))
-    print('last_lang: ' + str(last_lang))
-    print('all_lang: ' + str(all_lang))
+    #print('conv_lang: ' + str(conv_lang))
+    #print('last_lang: ' + str(last_lang))
+    #print('all_lang: ' + str(all_lang))
 
     #TODO stop hard coding this
     parameter_count = 3
@@ -115,19 +115,19 @@ def make_lang_decision(all_lang, conv_lang, last_lang):
             parameter_map[param_list[i]] += 1
         else:
             parameter_map[param_list[i]] = 1
-        print(parameter_map)
+        #print(parameter_map)
 
     #TODO: this hardcoding is particularly bad but i just want to get this done 
     lang = None
 
     #tiebreaker needed
     if len(parameter_map) == 3:
-        print("tiebreaker")
+        #print("tiebreaker")
         #arbitarily choosing the all_lang parameter for now
         lang = all_lang
     else:
         lang = max(parameter_map, key=parameter_map.get)
-    print(lang)
+    #print(lang)
     return lang
 
 def get_attr_from_sent_history(desiredAttr,sent_id):
