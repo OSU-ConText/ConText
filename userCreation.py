@@ -8,6 +8,9 @@ import languages
 #global variable to store users and their personas (languages)
 user_personas = {}
 
+#temp global var to store sent ids and receiver preferred lang
+receiver_langs = {}
+
 def createUserPersona(user_id):
     user_langs = []
     num_languages = random.randint(1, 5)
@@ -61,11 +64,22 @@ def checkLangForDashes(lang):
     else:
         return lang
 
-#Starts multiple conversations for each user
-def generateConversations():
+def generateMessages(id, convos):
+    #iterate through actual convos (with positive sent_ids in table)
+    pos_convos = [ele for ele in convos if ele > 0]
+    for i in range(len(pos_convos)):
+        #send between 1 and 5 messages in the convo
+        user_generated_lang = generateMessageLanguage(id)
+        #remove dashes (if needed) for sqlite constraint
+        user_generated_lang_no_dash = checkLangForDashes(user_generated_lang)
+        rand = random.randint(10, 20)
+        for j in range(rand):
+            sendInConversation(pos_convos[i], user_generated_lang_no_dash)
 
+#Starts multiple conversations for each user
+def generateConversations(num_users):
     #create 10 users (find a way to pass in a value so we can choose num users?)
-    for i in range(10):
+    for i in range(num_users):
         createUser()
 
     #create conversations between users
@@ -73,26 +87,24 @@ def generateConversations():
         for user2 in (list(user_personas.keys())[i+1:]):
             createConversation(user1, user2)
     
-    #find all user ids
+    #find all user ids & generate rand messages for their conversations 
     user_ids = user_personas.keys()
     #iterate through all users
     for id in user_ids:
         #find one of their conversations
         convos = getConversations(id)
-        pos_convos = [ele for ele in convos if ele > 0]
-        #iterate through actual convos (with positive sent_ids in table)
-        for i in range(len(pos_convos)):
-            #send between 1 and 5 messages in the convo
-            user_generated_lang = generateMessageLanguage(id)
-            #remove dashes (if needed) for sqlite constraint
-            user_generated_lang_no_dash = checkLangForDashes(user_generated_lang)
-            rand = random.randint(10, 20)
-            for j in range(rand):
-                sendInConversation(pos_convos[i], user_generated_lang_no_dash)
+        generateMessages(id, convos)
+        for sent_id in convos:
+            receiver_langs[sent_id] = receiverLang(sent_id)
+
+    print(receiver_langs)
+
 
 if __name__ == '__main__':
     database_helper.create_tables()
-    generateConversations()
+    print('Enter in # of users to generate conversations for: ')
+    num_users = int(input())
+    generateConversations(num_users)
 
     
         
