@@ -1,3 +1,16 @@
+# ConText
+
+ConText allows you to simulate a messaging platform where users can send messages to other users on the platform in conversations.  The sending history of the users will determine what language they will receive messages in.  This is all done automatically with no user input, creating a seamless user experience.  
+
+The language decision is based on three parameters
+1. The receiver's sending history based on the language of all messages they have sent on the platform
+2. The receiver's sending history based on the languages of messages they have sent in the conversation they are receiving a message in
+3. The language of the last message the user sent in the conversation
+
+These three parameters make agressive decisions about which language to translate to, and allow for users to easily be receiving messages in one language for a particular conversation, and another language in a separate conversation, based on the context of those particular conversations.
+
+In the event of a tie (all parameters suggest a different language), currently the language used in all messages sent on the platform is used as a tiebreaker
+
 ## How to Use
 
 There are a few preliminary steps in order to use ConText.  
