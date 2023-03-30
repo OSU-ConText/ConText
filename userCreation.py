@@ -116,9 +116,8 @@ def send_message():
 if __name__ == '__main__':
     database_helper.create_tables()
     for i in range(5):
-        #print('Enter in # of users to generate conversations for: ')
-        #num_users = int(input())
-        num_users = 10
+        print('Enter in # of users to generate conversations for: ')
+        num_users = int(input())
         generateConversations(num_users)
         for i in range(5):
             send_message()
