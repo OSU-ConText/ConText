@@ -115,11 +115,11 @@ def send_message():
 
 if __name__ == '__main__':
     database_helper.create_tables()
-    for i in range(5):
+    for i in range(1):
         print('Enter in # of users to generate conversations for: ')
         num_users = int(input())
         generateConversations(num_users)
-        for i in range(5):
+        for i in range(2):
             send_message()
         user_personas.clear()
         receiver_langs.clear()
