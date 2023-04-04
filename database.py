@@ -131,7 +131,9 @@ def get_recipient_lang(sent_id):
         decision_lang = cur.execute(f"SELECT last_message_lang FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()[0][0]
   
     if(all_lang is not None and last_lang is not None and conv_lang is not None):
-        database_helper.add_training_data(all_lang, conv_lang, last_lang, decision_lang)
+        #database_helper.add_training_data(all_lang, conv_lang, last_lang, decision_lang)
+        #database_helper.record_class_tree_training_data(recipient_history_id, decision_lang)
+        database_helper.record_class_data(recipient_history_id, decision_lang)
     return decision_lang
 
 def update_history(sent_id, lang):
@@ -237,5 +239,23 @@ def get_all_sent_history_info(sent_id):
             result.update({language_names[x]: str(language_counts[x])})
 
     return result
+
+def get_all_lang_info(sent_id):
+    result = {}
+    user_id = database_helper.get_attr_from_sent_history("user_id",sent_id)
+    result.update({"user_id": user_id})
+    result.update({"last_message_lang": database_helper.get_attr_from_sent_history("last_message_lang",sent_id)})
+    result.update({"total": int(database_helper.get_attr_from_sent_history("total",str(sent_id)))})
+    row = cur.execute(f"SELECT * FROM {sent_history} WHERE sent_id = {sent_id}").fetchone()
+    language_counts = list(row)[6:111]
+    language_names = list(languages.LANGUAGES.keys())
+    for x in range(len(language_counts)):
+        if language_counts[x] != 0:
+            result.update({language_names[x]: int(language_counts[x])})
+
+    return result
+
+
+
 
 

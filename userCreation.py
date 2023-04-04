@@ -27,8 +27,9 @@ def createUser():
 
 #randomly chooses a language from the users list
 def generateMessageLanguage(user_id):
-    createUserPersona(user_id)
+    #createUserPersona(user_id)
     persona = (user_personas[user_id])
+
     users_langs = user_personas[user_id]
     choosenLang = random.choice(users_langs)
     return choosenLang
