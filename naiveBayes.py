@@ -1,3 +1,4 @@
+import languages
 #dictionary for each parameter
 #counts how many times the parameter lang = decision lang
 param_one_lang_is_decision = {}
@@ -37,6 +38,7 @@ def separate_by_class(dataset):
     return separated
 
 #fill param = lang decision dictionaries
+#if the first param matches the translation decision : add 1
 def find_freq_table(decision, param_list):
     #dictionary with first param matching translation decision
     if decision is param_list[0]:
@@ -44,12 +46,14 @@ def find_freq_table(decision, param_list):
             param_one_lang_is_decision[decision] += 1
         else:
             param_one_lang_is_decision[decision] = 1
+
     #dictionary with second param matching translation decision
     if decision is param_list[1]:
         if param_two_lang_is_decision.get(decision) is not None:
             param_two_lang_is_decision[decision] += 1
         else:
             param_two_lang_is_decision[decision] = 1
+
     #dictionary with third param matching translation decision
     if decision is param_list[2]:
         if param_three_lang_is_decision.get(decision) is not None:
@@ -57,19 +61,23 @@ def find_freq_table(decision, param_list):
         else:
             param_three_lang_is_decision[decision] = 1
 
+
 #fill parameter lang count dictionaries
+#find total time each parameters is used
 def find_total_lang_instance(param_list):
     if param_one_lang.get(param_list[0]) is not None:
         param_one_lang[param_list[0]] += 1
-    else:
+    elif param_one_lang.get(param_list[0]) is None:
         param_one_lang[param_list[0]] = 1
+
     if param_two_lang.get(param_list[1]) is not None:
         param_two_lang[param_list[1]] += 1
-    else:
+    elif param_two_lang.get(param_list[1]) is None:
         param_two_lang[param_list[1]] = 1
+
     if param_three_lang.get(param_list[2]) is not None:
         param_three_lang[param_list[2]] += 1
-    else:
+    elif param_three_lang.get(param_list[2]) is None:
         param_three_lang[param_list[2]] = 1
 
 #calculate probability of param = lang decision
@@ -106,11 +114,13 @@ def overall_probability(total_rows, data):
         else:
             class_counts[i] += 1
     for i in all_langs:
-        overall_prob_langs[i] = class_counts.get(i) / total_rows
-    #print(overall_prob_langs)
+        if class_counts.get(i) is None:
+            overall_prob_langs[i] = 0
+        else:
+            overall_prob_langs[i] = class_counts.get(i) / total_rows
 
 #calculate posterior probability to make decision
-def posterior_probability(param_list):
+def posterior_probability(param_list, decision):
     #posterior_prob_langs = {}
     #iterate through all possible classes/decisions (all languages from languages.py)
     #calculate probability by multiplying the conditional probability for each parameter given the
@@ -130,9 +140,6 @@ def posterior_probability(param_list):
     #for lang in all_langs:
     return
 
-    
-
-
 #test separating data by class (language decision)
 data = [["da", "am","da","da"],
 ["af","af","sn","af"],
@@ -143,7 +150,9 @@ data = [["da", "am","da","da"],
 total_translations = len(data)
 overall_probability(total_translations, data)
 data_set = separate_by_class(data)
-#print(data_set)
+print("data set separated by lang decision")
+print(data_set)
+
 for key in data_set:
     for list in data_set[key]:
         find_freq_table(key, list)
@@ -180,6 +189,32 @@ print(cp_param_three)
 print("Overall probability for each lang decision")
 print(overall_prob_langs)
 
+posterior_probability(["af", "am", "af"], "af")
+print("Posterior probability")
+print(posterior_prob_langs)
 
 #TODO:
 #calculate posterior probability
+#account for 0's
+
+#three parts to the probability calculation
+#likelihood probability: number of instances with a translation language with a certain parameter/total number of instances of a translation language
+#ex: P(param 1 = af | translation is af): af is the translation and af is param 1: 6, af is the translation: 12, likelihood = 6/12 = .5
+#repeat for each class and each parameter
+
+#overall probability: number of instances a translation lang is choosen overall
+#ex: af is the translation 12 times, we make a translation decision 36 times, P(af) = 12/36 = .333
+
+#posterior probability
+#calculate probability by multiplying the conditional probability for each parameter given the
+        #class/decision by the probability of the class/decision overall
+        #whichever posterior probability is the greatest is the decision
+        #Ex: P(af | af, en, af) = conditional probability of af param 1 given af decision * 
+        #conditional probability of en param 2 given af decision *
+        #conditional probability of af param 3 given af decision *
+        #overall probability of af
+        #repeat for each language
+        #continuation = P(sq | af, en, af) = conditional probability of af param 1 given sq decision * 
+        #conditional probability of en param 2 given sq decision *
+        #conditional probability of af param 3 given sq decision *
+        #overall probability of sq

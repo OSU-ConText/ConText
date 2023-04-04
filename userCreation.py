@@ -27,7 +27,6 @@ def createUser():
 
 #randomly chooses a language from the users list
 def generateMessageLanguage(user_id):
-    createUserPersona(user_id)
     persona = (user_personas[user_id])
     users_langs = user_personas[user_id]
     choosenLang = random.choice(users_langs)
@@ -71,9 +70,10 @@ def generateMessages(id, convos):
         #send between 1 and 5 messages in the convo
         user_generated_lang = generateMessageLanguage(id)
         #remove dashes (if needed) for sqlite constraint
-        user_generated_lang_no_dash = checkLangForDashes(user_generated_lang)
+        #user_generated_lang_no_dash = checkLangForDashes(user_generated_lang)
         rand = random.randint(1, 5)
         for j in range(rand):
+            user_generated_lang_no_dash = checkLangForDashes(user_generated_lang)
             sendInConversation(pos_convos[i], user_generated_lang_no_dash)
 
 #Starts multiple conversations for each user
