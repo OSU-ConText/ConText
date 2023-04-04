@@ -154,113 +154,113 @@ def check_conversation_exists(user_id_1, user_id_2):
             return 1
     return 0
 
-def create_class_tree_training_data():
-    if (not check_table_existence(class_tree_training_data, True)):
-    #print(f'creating {training_data} table')
-        database.cur.execute(f'''CREATE TABLE {class_tree_training_data}
-            (all_messages_lang_1 TEXT,
-            all_messages_percent_1 REAL,
-            all_messages_lang_2 TEXT,
-            all_messages_percent_2 REAL,
-            all_messages_lang_3 TEXT,
-            all_messages_percent_3 REAL,
-            conv_messages_lang_1 TEXT, 
-            conv_messages_percent_1 REAL,
-            conv_messages_lang_2 TEXT, 
-            conv_messages_percent_2 REAL,
-            conv_messages_lang_3 TEXT, 
-            conv_messages_percent_3 REAL,
-            last_message_lang TEXT,
-            last_message_percent REAL,
-            label TEXT)''')
+# def create_class_tree_training_data():
+#     if (not check_table_existence(class_tree_training_data, True)):
+#     #print(f'creating {training_data} table')
+#         database.cur.execute(f'''CREATE TABLE {class_tree_training_data}
+#             (all_messages_lang_1 TEXT,
+#             all_messages_percent_1 REAL,
+#             all_messages_lang_2 TEXT,
+#             all_messages_percent_2 REAL,
+#             all_messages_lang_3 TEXT,
+#             all_messages_percent_3 REAL,
+#             conv_messages_lang_1 TEXT, 
+#             conv_messages_percent_1 REAL,
+#             conv_messages_lang_2 TEXT, 
+#             conv_messages_percent_2 REAL,
+#             conv_messages_lang_3 TEXT, 
+#             conv_messages_percent_3 REAL,
+#             last_message_lang TEXT,
+#             last_message_percent REAL,
+#             label TEXT)''')
     #print(f'{training_data} table created')
 
-def record_class_tree_training_data(sent_id, decision_lang):
-    conv_info = database.get_all_lang_info(sent_id)
-    all_info = database.get_all_lang_info(int(conv_info.get("user_id")) * -1)
-    print(conv_info)
-    print(all_info)
-    conv_info.pop("user_id")
-    all_info.pop("user_id")
-    create_class_tree_training_data()
-    conv_total = int(conv_info.get("total"))
-    all_total = int(all_info.get("total"))
-    conv_info.pop("total")
-    all_info.pop("total")
-    last_message_lang = conv_info["last_message_lang"]
-    last_message_percent = 1.0
-    conv_info.pop("last_message_lang")
-    all_info.pop("last_message_lang")
-    label = decision_lang
+# def record_class_tree_training_data(sent_id, decision_lang):
+#     conv_info = database.get_all_lang_info(sent_id)
+#     all_info = database.get_all_lang_info(int(conv_info.get("user_id")) * -1)
+#     print(conv_info)
+#     print(all_info)
+#     conv_info.pop("user_id")
+#     all_info.pop("user_id")
+#     create_class_tree_training_data()
+#     conv_total = int(conv_info.get("total"))
+#     all_total = int(all_info.get("total"))
+#     conv_info.pop("total")
+#     all_info.pop("total")
+#     last_message_lang = conv_info["last_message_lang"]
+#     last_message_percent = 1.0
+#     conv_info.pop("last_message_lang")
+#     all_info.pop("last_message_lang")
+#     label = decision_lang
 
-    all_messages_lang_1 = None
-    all_messages_percent_1 = None
-    all_messages_lang_2 = None
-    all_messages_percent_2 = None
-    all_messages_lang_3 = None
-    all_messages_percent_3 = None
+#     all_messages_lang_1 = None
+#     all_messages_percent_1 = None
+#     all_messages_lang_2 = None
+#     all_messages_percent_2 = None
+#     all_messages_lang_3 = None
+#     all_messages_percent_3 = None
     
-    if len(all_info) > 0:
-        all_messages_lang_1 = max(all_info, key=all_info.get)
-        print(all_messages_lang_1)
-        all_messages_percent_1 = all_info.get(all_messages_lang_1) / all_total
-        print(all_messages_percent_1, "/", all_total)
-        all_info.pop(all_messages_lang_1)
+#     if len(all_info) > 0:
+#         all_messages_lang_1 = max(all_info, key=all_info.get)
+#         print(all_messages_lang_1)
+#         all_messages_percent_1 = all_info.get(all_messages_lang_1) / all_total
+#         print(all_messages_percent_1, "/", all_total)
+#         all_info.pop(all_messages_lang_1)
         
-        if len(all_info) > 0:
-            all_messages_lang_2 = max(all_info, key=all_info.get)
-            print(all_messages_lang_2)
-            all_messages_percent_2 = all_info.get(all_messages_lang_2) / all_total
-            print(all_messages_percent_2, "/", all_total)
-            all_info.pop(all_messages_lang_2)
+#         if len(all_info) > 0:
+#             all_messages_lang_2 = max(all_info, key=all_info.get)
+#             print(all_messages_lang_2)
+#             all_messages_percent_2 = all_info.get(all_messages_lang_2) / all_total
+#             print(all_messages_percent_2, "/", all_total)
+#             all_info.pop(all_messages_lang_2)
             
-            if len(all_info) > 0:
-                all_messages_lang_3 = max(all_info, key=all_info.get)
-                all_messages_percent_3 = all_info.get(all_messages_lang_3) / all_total
+#             if len(all_info) > 0:
+#                 all_messages_lang_3 = max(all_info, key=all_info.get)
+#                 all_messages_percent_3 = all_info.get(all_messages_lang_3) / all_total
 
-    conv_messages_lang_1 = None
-    conv_messages_percent_1 = None
-    conv_messages_lang_2 = None
-    conv_messages_percent_2 = None
-    conv_messages_lang_3 = None
-    conv_messages_percent_3 = None
+#     conv_messages_lang_1 = None
+#     conv_messages_percent_1 = None
+#     conv_messages_lang_2 = None
+#     conv_messages_percent_2 = None
+#     conv_messages_lang_3 = None
+#     conv_messages_percent_3 = None
     
-    if len(conv_info) > 0:
-        conv_messages_lang_1 = max(conv_info, key=conv_info.get)
-        #print(conv_info[conv_messages_lang_1])
-        count = conv_info[conv_messages_lang_1] #conv_info.get(conv_messages_lang_1)
-        conv_messages_percent_1 = int(count) / int(conv_total)
-        conv_info.pop(conv_messages_lang_1)
-        if len(conv_info) > 0:
-            conv_messages_lang_2 = max(conv_info, key=conv_info.get)
-            count = conv_info.get(conv_messages_lang_2)
-            conv_messages_percent_2 =  int(count) / int(conv_total)
-            conv_info.pop(conv_messages_lang_2)
-            if len(conv_info) > 0:
-                conv_messages_lang_3 = max(conv_info, key=conv_info.get)
-                count = conv_info.get(conv_messages_lang_3)
-                conv_messages_percent_3 = int(count) / int(conv_total)
+#     if len(conv_info) > 0:
+#         conv_messages_lang_1 = max(conv_info, key=conv_info.get)
+#         #print(conv_info[conv_messages_lang_1])
+#         count = conv_info[conv_messages_lang_1] #conv_info.get(conv_messages_lang_1)
+#         conv_messages_percent_1 = int(count) / int(conv_total)
+#         conv_info.pop(conv_messages_lang_1)
+#         if len(conv_info) > 0:
+#             conv_messages_lang_2 = max(conv_info, key=conv_info.get)
+#             count = conv_info.get(conv_messages_lang_2)
+#             conv_messages_percent_2 =  int(count) / int(conv_total)
+#             conv_info.pop(conv_messages_lang_2)
+#             if len(conv_info) > 0:
+#                 conv_messages_lang_3 = max(conv_info, key=conv_info.get)
+#                 count = conv_info.get(conv_messages_lang_3)
+#                 conv_messages_percent_3 = int(count) / int(conv_total)
 
 
-    #execute insertion of user and commit
-    database.cur.execute(f"""
-        INSERT INTO {class_tree_training_data} (all_messages_lang_1, all_messages_percent_1, 
-        all_messages_lang_2, all_messages_percent_2,
-        all_messages_lang_3, all_messages_percent_3,
-        conv_messages_lang_1, conv_messages_percent_1,
-        conv_messages_lang_2, conv_messages_percent_2,
-        conv_messages_lang_3, conv_messages_percent_3,
-        last_message_lang, last_message_percent, label) VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)""", 
-    (all_messages_lang_1, all_messages_percent_1, 
-     all_messages_lang_2, all_messages_percent_2,
-     all_messages_lang_3, all_messages_percent_3,
-     conv_messages_lang_1, conv_messages_percent_1,
-     conv_messages_lang_2, conv_messages_percent_2,
-     conv_messages_lang_3, conv_messages_percent_3,
-     last_message_lang, last_message_percent, label))
+#     #execute insertion of user and commit
+#     database.cur.execute(f"""
+#         INSERT INTO {class_tree_training_data} (all_messages_lang_1, all_messages_percent_1, 
+#         all_messages_lang_2, all_messages_percent_2,
+#         all_messages_lang_3, all_messages_percent_3,
+#         conv_messages_lang_1, conv_messages_percent_1,
+#         conv_messages_lang_2, conv_messages_percent_2,
+#         conv_messages_lang_3, conv_messages_percent_3,
+#         last_message_lang, last_message_percent, label) VALUES
+#         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)""", 
+#     (all_messages_lang_1, all_messages_percent_1, 
+#      all_messages_lang_2, all_messages_percent_2,
+#      all_messages_lang_3, all_messages_percent_3,
+#      conv_messages_lang_1, conv_messages_percent_1,
+#      conv_messages_lang_2, conv_messages_percent_2,
+#      conv_messages_lang_3, conv_messages_percent_3,
+#      last_message_lang, last_message_percent, label))
     
-    database.con.commit()
+#     database.con.commit()
 
 
 def create_class_data():
@@ -286,11 +286,8 @@ def get_language_columns_for_test_data_insertion():
     return str
 
 def record_class_data(sent_id, decision_lang):
-
     conv_info = database.get_all_lang_info(sent_id)
     all_info = database.get_all_lang_info(int(conv_info.get("user_id")) * -1)
-    # print(conv_info)
-    # print(all_info)
     conv_info.pop("user_id")
     all_info.pop("user_id")
     create_class_data()
@@ -305,42 +302,30 @@ def record_class_data(sent_id, decision_lang):
     label = decision_lang
     mLanguages = {}
 
-    for language in languages.LANGUAGES:
-        language = language.replace('-', '_')
-        added = False
-        if language in conv_info:
-            mLanguages[language] = conv_info[language] / conv_total
-            added = True
-        if language in all_info:
-            if added:
-                mLanguages[language] += all_info[language] / all_total
-            else:
-                mLanguages[language] = all_info[language] / all_total
-        if not added:
-            mLanguages[language] = 0
+    if(len(conv_info) > 0):
+        for language in languages.LANGUAGES:
+            language = language.replace('-', '_')
+            added = False
+            if language in conv_info:
+                mLanguages[language] = conv_info[language] / conv_total
+                added = True
+            if language in all_info:
+                if added:
+                    mLanguages[language] += all_info[language] / all_total
+                else:
+                    mLanguages[language] = all_info[language] / all_total
+            if not added:
+                mLanguages[language] = 0
 
-    mLanguages[last_message_lang] += last_message_percent
-    #print(mLanguages.values())
+        mLanguages[last_message_lang] += last_message_percent
 
-    languagesString = "INSERT INTO class_data (label, "+get_language_columns_for_test_data_insertion()+") VALUES (""" 
-    languagesString += "\'"+ label +"\', "
-    #languagesString2 = ''.join(str(list(mLanguages.values())))
-    languagesString += ', '.join([str(item) for item in mLanguages.values()])
-    languagesString += ')'
-    print(languagesString)
-    database.cur.execute(languagesString)
+        languagesString = "INSERT INTO class_data (label, "+get_language_columns_for_test_data_insertion()+") VALUES (""" 
+        languagesString += "\'"+ label +"\', "
+        languagesString += ', '.join([str(item) for item in mLanguages.values()])
+        languagesString += ')'
+        #print(languagesString)
+        database.cur.execute(languagesString)
 
-
-    # database.cur.execute(f"""
-    #     INSERT INTO {"class_data"} (label, ) VALUES
-    #     (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)""", 
-    #     (all_messages_lang_1, all_messages_percent_1, 
-    #     all_messages_lang_2, all_messages_percent_2,
-    #     all_messages_lang_3, all_messages_percent_3,
-    #     conv_messages_lang_1, conv_messages_percent_1,
-    #     conv_messages_lang_2, conv_messages_percent_2,
-    #     conv_messages_lang_3, conv_messages_percent_3,
-    #     last_message_lang, last_message_percent, label))
 
 
 
