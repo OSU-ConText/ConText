@@ -68,11 +68,12 @@ def generateMessages(id, convos):
     pos_convos = [ele for ele in convos if ele > 0]
     for i in range(len(pos_convos)):
         #send between 1 and 5 messages in the convo
-        user_generated_lang = generateMessageLanguage(id)
+        #user_generated_lang = generateMessageLanguage(id)
         #remove dashes (if needed) for sqlite constraint
         #user_generated_lang_no_dash = checkLangForDashes(user_generated_lang)
         rand = random.randint(1, 5)
         for j in range(rand):
+            user_generated_lang = generateMessageLanguage(id)
             user_generated_lang_no_dash = checkLangForDashes(user_generated_lang)
             sendInConversation(pos_convos[i], user_generated_lang_no_dash)
 
