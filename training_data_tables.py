@@ -185,26 +185,27 @@ def create_table_with_all_langs_and_id():
 
 def record_training_data_all_langs(sent_id, decision_lang):
     params = database.get_params(sent_id)
+
     if None not in list(params.values()):
         create_table_with_all_langs_and_id()
         insertion = f"""INSERT INTO {table_with_all_langs_and_id} (label) VALUES (\'{decision_lang}\')"""
         insertion = insertion.replace('-', '_')
-
         database.cur.execute(insertion)
         id = database.cur.lastrowid#database.cur.execute("SELECT SCOPE_IDENTITY()").fetchone()
+        print(id)
         update = f"""UPDATE {table_with_all_langs_and_id} SET {params["all_messages_lang"]} = {params["all_messages_lang"]} + 1 WHERE row_id = {id}"""
         update = update.replace('-', '_')
+        
         database.cur.execute(update)
         update2 = f"""UPDATE {table_with_all_langs_and_id} SET {params["conv_messages_lang"]} = {params["conv_messages_lang"]} + 1 WHERE row_id = {id}"""
-        update2 = update.replace('-', '_')
+        update2 = update2.replace('-', '_')
         database.cur.execute(update2)
+        
         update3 = f"""UPDATE {table_with_all_langs_and_id} SET {params["last_message_lang"]} = {params["last_message_lang"]} + 1 WHERE row_id = {id}"""
-        update3 = update2.replace('-', '_')
+        update3 = update3.replace('-', '_')
         database.cur.execute(update3)
-        print(insertion)
-        print(update)
-        print(update2)
-        print(update3)
+
+
 
 
 

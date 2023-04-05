@@ -176,7 +176,7 @@ def update_history(sent_id, lang):
         FROM {sent_history} 
         WHERE sent_id = {sent_id}""").fetchone()
     #slice 6 columns at beginning of row to only get languages, don't include total
-    row_list = list(row)[6:111]
+    row_list = list(row)[6:-2]
     max_count = max(row_list)
     lang_index = row_list.index(max_count)
 
@@ -192,7 +192,7 @@ def update_history(sent_id, lang):
         FROM {sent_history} 
         WHERE sent_id = {all_convos_id}""").fetchone()
     
-    row_list = list(row)[6:111]
+    row_list = list(row)[6:-2]
     max_count = max(row_list)
     lang_index = row_list.index(max_count)
 
@@ -234,7 +234,7 @@ def get_all_sent_history_info(sent_id):
     result.update({"is_all_messages": str(bool(database_helper.get_attr_from_sent_history("is_all_messages",sent_id)))})
     result.update({"total": str(database_helper.get_attr_from_sent_history("total",str(sent_id)))})
     row = cur.execute(f"SELECT * FROM {sent_history} WHERE sent_id = {sent_id}").fetchone()
-    language_counts = list(row)[6:111]
+    language_counts = list(row)[6:-2]
     language_names = list(languages.LANGUAGES.keys())
     for x in range(len(language_counts)):
         if language_counts[x] != 0:
@@ -249,7 +249,7 @@ def get_all_lang_info(sent_id):
     result.update({"last_message_lang": database_helper.get_attr_from_sent_history("last_message_lang",sent_id)})
     result.update({"total": int(database_helper.get_attr_from_sent_history("total",str(sent_id)))})
     row = cur.execute(f"SELECT * FROM {sent_history} WHERE sent_id = {sent_id}").fetchone()
-    language_counts = list(row)[6:111]
+    language_counts = list(row)[6:2]
     language_names = list(languages.LANGUAGES.keys())
     for x in range(len(language_counts)):
         if language_counts[x] != 0:
