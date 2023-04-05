@@ -135,7 +135,7 @@ def get_recipient_lang(sent_id):
         database_helper.add_training_data(all_lang, conv_lang, last_lang, decision_lang)
         #database_helper.record_class_tree_training_data(recipient_history_id, decision_lang)
         #database_helper.record_class_data(recipient_history_id, decision_lang)
-        training_data_tables.record_training_data_all_langs(sent_id,decision_lang)
+        training_data_tables.record_training_data_all_langs(recipient_history_id,decision_lang)
     return decision_lang
 
 def update_history(sent_id, lang):
