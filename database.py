@@ -1,6 +1,7 @@
 import sqlite3
 import languages
 import database_helper
+import training_data_tables
 
 
 #variables to store name of the tables we are using
@@ -131,9 +132,10 @@ def get_recipient_lang(sent_id):
         decision_lang = cur.execute(f"SELECT last_message_lang FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()[0][0]
   
     if(all_lang is not None and last_lang is not None and conv_lang is not None):
-        #database_helper.add_training_data(all_lang, conv_lang, last_lang, decision_lang)
+        database_helper.add_training_data(all_lang, conv_lang, last_lang, decision_lang)
         #database_helper.record_class_tree_training_data(recipient_history_id, decision_lang)
-        database_helper.record_class_data(recipient_history_id, decision_lang)
+        #database_helper.record_class_data(recipient_history_id, decision_lang)
+        training_data_tables.record_training_data_all_langs(sent_id,decision_lang)
     return decision_lang
 
 def update_history(sent_id, lang):
@@ -253,6 +255,14 @@ def get_all_lang_info(sent_id):
         if language_counts[x] != 0:
             result.update({language_names[x]: int(language_counts[x])})
 
+    return result
+
+def get_params(sent_id):
+    result = {}
+    user_id = database_helper.get_attr_from_sent_history("user_id",sent_id)
+    result.update({"all_messages_lang": database_helper.get_attr_from_user("all_messages_lang",user_id)})
+    result.update({"conv_messages_lang": database_helper.get_attr_from_sent_history("conv_messages_lang",sent_id)})
+    result.update({"last_message_lang": database_helper.get_attr_from_sent_history("last_message_lang",sent_id)})
     return result
 
 
