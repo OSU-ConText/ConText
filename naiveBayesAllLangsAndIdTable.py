@@ -13,7 +13,7 @@ from sklearn.metrics import (
 )
 
 # open the CSV file
-with open('all_langs_and_id_data.csv', 'r') as f:
+with open('partial_langs_and_id_data.csv', 'r') as f:
     reader = csv.reader(f)
     labels = next(reader)
     labels.pop(0)
@@ -21,7 +21,7 @@ with open('all_langs_and_id_data.csv', 'r') as f:
     data = [row for row in reader]
 
 # split data into features and labels
-X = [[(float(row[i]) + 1) for i in range(2, len(row)-1)] for row in data]
+X = [[(float(row[i])) for i in range(2, len(row)-1)] for row in data]
 y = [str(row[1]) for row in data]
 # split data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
