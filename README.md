@@ -1,5 +1,15 @@
 # ConText
 
+## Table of Contents
+1. Introduction
+2. How to Use
+    1. Preliminary Steps
+    2. Usage and Descriptions
+3. Other Functionality
+    1. database_app.py
+    2. userCreation.py
+
+## Introduction
 ConText allows you to simulate a messaging platform where users can send messages to other users on the platform in conversations.  The sending history of the users will determine what language they will receive messages in.  This is all done automatically with no user input, creating a seamless user experience.  
 
 The language decision is based on three parameters
@@ -13,12 +23,14 @@ In the event of a tie (all parameters suggest a different language), currently t
 
 ## How to Use
 
+### Preliminary Steps
 There are a few preliminary steps in order to use ConText.  
 
 You must have the context.db database created.  It is easiest to track how ConText is being used by starting with an empty database, so we recommend deleting context.db, and then creating the tables.  Creating the tables can be done by calling database_helper.create_tables(), which can easily be ran by launching database_app.py and following the instructions.
 
 Once you have the database set up, you are ready to use ConText.
 
+### Usage and Descriptions
 We recommend running demo2.py, this will give you a straightforward interface for using ConText.  We will explain each command.
 
 Creating a new user will create a row in user and sent_history to keep track of data for that user.  In sent_history, we keep track of all messages sent by the user in the row where the sent_it is equal to the negative of the user_id.
