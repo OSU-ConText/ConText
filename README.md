@@ -1,7 +1,7 @@
 # ConText
 
 ## Table of Contents
-1. Introduction
+1. Introduction(##Introduction)
 2. How to Use
     1. Preliminary Steps
     2. Usage and Descriptions
@@ -9,7 +9,7 @@
     1. database_app.py
     2. userCreation.py
 
-## Introduction
+##Introduction
 ConText allows you to simulate a messaging platform where users can send messages to other users on the platform in conversations.  The sending history of the users will determine what language they will receive messages in.  This is all done automatically with no user input, creating a seamless user experience.  
 
 The language decision is based on three parameters
@@ -47,6 +47,8 @@ Sending a text in a conversation will allow one user to send a message to anothe
 
 ## Other functionality
 
+### database_app.py
 database_app.py has a separate interface you can use to interact with the backend of the project.  There is nothing here that you can't do in demo2.py, so we recommend using demo2.py
 
+### userCreation.py
 userCreation.py can be run to create the tables and generate a bunch of conversations, with users that speak 1-5 languages.  This is what we used in order to generate training data.  If you would like to generate training data for your own purposes, we recommend running this, otherwise, if you just want to develop an understanding of the system, manually running demo2.py is the recommended way.
