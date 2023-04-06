@@ -3,6 +3,21 @@
 #      but sqlite does not accept - for column headers
 #note2: removed icelandic and odia as supported languages because keys are keywords in sqlite
 LANGUAGES = {
+    'en': 'english',
+    'es': 'spanish',
+    'hi': 'hindi',
+    'fr': 'french',
+    'ar': 'arabic',
+    'bn': 'bengali',
+    'ru': 'russian',
+    'pt': 'portuguese',
+    'id': 'indonesian',
+    'ja': 'japanese',
+    'de': 'german',
+    'pa': 'punjabi',
+    'zh-cn': 'chinese (simplified)',
+}
+LANGUAGES2 = {
     'af': 'afrikaans',
     'sq': 'albanian',
     'am': 'amharic',
