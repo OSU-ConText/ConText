@@ -2,7 +2,7 @@
 #note: in google translate, chinese simplified is denoted by zh-cn and chinese traditional is denoted by ch-tw
 #      but sqlite does not accept - for column headers
 #note2: removed icelandic and odia as supported languages because keys are keywords in sqlite
-LANGUAGES2 = {
+LANGUAGES = {
     'en': 'english',
     'es': 'spanish',
     'hi': 'hindi',
@@ -17,7 +17,7 @@ LANGUAGES2 = {
     'pa': 'punjabi',
     'zh-cn': 'chinese (simplified)',
 }
-LANGUAGES = {
+LANGUAGES2 = {
     'af': 'afrikaans',
     'sq': 'albanian',
     'am': 'amharic',
