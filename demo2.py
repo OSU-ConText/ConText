@@ -16,24 +16,29 @@ while (not_quit):
     print('[Q] End Demo')
 
     user_input = input()
+    # create a user and print userid in the database
     if (user_input == 'U'):
         user = database.create_user()
         print("User " + str(user) + " has been created and added to the database")
+    # create a conversation between two users
     elif (user_input == 'C'):
         user_id_1 = input('What is the first user_id? ')
         user_id_2 = input('What is the second user_id? ')
         database.create_sent_history(user_id_1, user_id_2)
         print("A conversation between user " + str(user_id_1) + " and user " + str(user_id_2) + " has been started and added to the database")
+    #Fetch datas from an conversation
     elif (user_input == 'P'):
         sent_id = input('What conversation would you like to gather data from?\n')
         history = database.get_all_sent_history_info(sent_id)
         print(history)
+    # get users involved in an conversation
     elif (user_input == 'F'):
         sent_id = input('What conversation would you like to get the details of? ')
         users = database.get_users_sent_history(sent_id)
         user1 = users[0]
         user2 = users[1]
-        print("Users in this conversation: ", user1, ",", user2)
+        print("The sender in the conversation is: " , user1 ,", the receiver in the conversation is: ", user2 , "\n")
+    # Get all conversation the user is in as a sender
     elif (user_input == 'FC'):
         user_id = input('What user would you like to view conversations for? ')
         sent_ids = database.get_sent_ids(user_id)
