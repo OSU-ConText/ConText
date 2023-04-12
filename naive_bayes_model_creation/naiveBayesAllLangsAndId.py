@@ -13,7 +13,6 @@ from joblib import dump, load
 with open('csv_files/all_langs_and_id_data.csv', 'r') as f:
     reader = csv.reader(f)
     labels = next(reader)
-    #first_column = reader.columns[0]
     data = list(reader)
 
 # split data into features and labels
