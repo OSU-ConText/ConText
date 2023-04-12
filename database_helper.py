@@ -101,12 +101,10 @@ def get_recipient_history_id(sent_id):
 
 #will make a decision based on the parameters
 def make_lang_decision(all_lang, conv_lang, last_lang):
-    #TODO Taking the three parameters, find the most common, or apply tiebreaks to choose a preferred language, and return that language
-    #print('conv_lang: ' + str(conv_lang))
-    #print('last_lang: ' + str(last_lang))
-    #print('all_lang: ' + str(all_lang))
+    #Taking the three parameters, find the most common, or apply tiebreaks to choose a preferred language, and return that language
 
-    #TODO stop hard coding this
+
+    #due to being just three parameters, this is hard coded.  if you add more parameters, you'll need to come up with a better solution
     parameter_count = 3
     parameter_map = {}
     param_list = [conv_lang, last_lang, all_lang]
@@ -117,8 +115,7 @@ def make_lang_decision(all_lang, conv_lang, last_lang):
         else:
             parameter_map[param_list[i]] = 1
         #print(parameter_map)
-
-    #TODO: this hardcoding is particularly bad but i just want to get this done 
+        
     lang = None
 
     #tiebreaker needed
