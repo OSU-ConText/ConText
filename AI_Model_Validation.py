@@ -12,7 +12,8 @@ import languages
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import f1_score
 
-
+#runs a k-fold cross validation on a model
+#pass in a saved AI model, parameters, and labels
 def cross_validation(model, X, y):
     print("Cross Validation: ")
 
@@ -26,6 +27,8 @@ def cross_validation(model, X, y):
     print('Cross-validation scores:', cv_scores)
     print('Mean accuracy:', np.mean(cv_scores))
 
+#calculates the accuracy of a models predictions
+#pass in a saved AI model, parameters, and labels
 def accuracy(model, X, y):
     print("Accuracy: ")
 
@@ -37,6 +40,8 @@ def accuracy(model, X, y):
     accuracy = accuracy_score(y_test, y_pred)
     print(accuracy)
 
+#creates a confusion matrix for the model
+#pass in a saved AI model, parameters, and labels
 def confusion_matrix(model, X, y):
     #confustion matrix
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
@@ -62,6 +67,8 @@ def confusion_matrix(model, X, y):
     fig.colorbar(cm)
     plt.show()
 
+#calculates the f1 score of a models predictions
+#pass in a saved AI model, parameters, and labels
 def find_f1_score(model, X, y):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
     y_pred = model.predict(X_test)
@@ -75,7 +82,8 @@ def find_f1_score(model, X, y):
     score = f1_score(y_test, y_pred, average="weighted")
     print("Weighted F1-Score: ", score)
         
-
+#runs all validations above on model using partial_langs_and_id_data.csv
+#pass in a saved AI model
 def validate_partial_langs_and_id(model):
     #partial_langs_and_id_validation
     # open the CSV file
@@ -93,6 +101,8 @@ def validate_partial_langs_and_id(model):
     #confusion_matrix(gnb_partial_langs, X, y)
     find_f1_score(model, X, y)
 
+#runs all validations above on model using all_langs_and_id_data.csv
+#pass in a saved AI model
 def validate_all_langs_and_id(model):
     #all_langs_and_id_validation
     # open the CSV file
@@ -110,6 +120,7 @@ def validate_all_langs_and_id(model):
     #confusion_matrix(gnb_partial_langs, X, y)
     find_f1_score(model, X, y)
 
+#calls all validations on saved models
 if __name__ == '__main__':
     print("GNB model with partial langs and id data: ")
     gnb_partial_langs = load('AI_model_pkl_files/gnb_partial_langs_and_id.pkl')
