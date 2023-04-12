@@ -11,6 +11,8 @@ user_personas = {}
 #temp global var to store sent ids and receiver preferred lang
 receiver_langs = {}
 
+#create user personas: simulate users being "fluent" in a few languages
+#each user gets randomly assigned 1-5 languages
 def createUserPersona(user_id):
     user_langs = []
     num_languages = random.randint(1, 5)
@@ -27,9 +29,7 @@ def createUser():
 
 #randomly chooses a language from the users list
 def generateMessageLanguage(user_id):
-    #createUserPersona(user_id)
     persona = (user_personas[user_id])
-
     users_langs = user_personas[user_id]
     choosenLang = random.choice(users_langs)
     return choosenLang
@@ -58,6 +58,7 @@ def receiverLang(sent_id):
 def sendInConversation(convoId, user_generated_lang):
     sendMessage(convoId, user_generated_lang)
 
+#removes dashes from languages for continuity with database languages
 def checkLangForDashes(lang):
     if "-" in lang:
         newString = lang.replace("-", "_")
@@ -65,14 +66,12 @@ def checkLangForDashes(lang):
     else:
         return lang
 
+#generates messages in send in a user's conversation
 def generateMessages(id, convos):
     #iterate through actual convos (with positive sent_ids in table)
     pos_convos = [ele for ele in convos if ele > 0]
     for i in range(len(pos_convos)):
         #send between 1 and 5 messages in the convo
-        #user_generated_lang = generateMessageLanguage(id)
-        #remove dashes (if needed) for sqlite constraint
-        #user_generated_lang_no_dash = checkLangForDashes(user_generated_lang)
         rand = random.randint(1, 5)
         for j in range(rand):
             user_generated_lang = generateMessageLanguage(id)
@@ -84,26 +83,13 @@ def generateConversations(num_users):
     #create 10 users (find a way to pass in a value so we can choose num users?)
     for i in range(num_users):
         createUser()
-
     #create conversations between users
     for i, user1 in enumerate(user_personas):
         for user2 in (list(user_personas.keys())[i+1:]):
             createConversation(user1, user2)
-    
     send_message()
-    
-    #find all user ids & generate rand messages for their conversations 
-    #user_ids = user_personas.keys()
-    #iterate through all users
-    #for id in user_ids:
-        #find one of their conversations
-        #convos = getConversations(id)
-        #generateMessages(id, convos)
-        #for sent_id in convos:
-            #receiver_langs[sent_id] = receiverLang(sent_id)
 
-    #print(receiver_langs)
-
+#send messages for all users in all their conversations
 def send_message():
     #find all user ids & generate rand messages for their conversations 
     user_ids = user_personas.keys()
@@ -116,6 +102,7 @@ def send_message():
             receiver_langs[sent_id] = receiverLang(sent_id)
 
 
+#main function to create users and generate conversations between them
 if __name__ == '__main__':
     database_helper.create_tables()
     for i in range(1):

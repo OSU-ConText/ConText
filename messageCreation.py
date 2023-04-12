@@ -16,6 +16,7 @@ def translateMessage(destLang, srcLang, message):
     print(translated_wanted_sentence)
     return translated_wanted_sentence
 
+#detects the language of a message using google translate
 def detectLang(message):
     translator = Translator()
     return translator.detect(message).lang
