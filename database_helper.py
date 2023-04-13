@@ -139,6 +139,8 @@ def make_lang_decision(all_lang, conv_lang, last_lang):
         #print("tiebreaker")
         #arbitarily choosing the all_lang parameter for now
         lang = all_lang
+    elif len(parameter_map) == 0:  
+        lang = None
     else:
         lang = max(parameter_map, key=parameter_map.get)
     #print(lang)
