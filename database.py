@@ -10,10 +10,16 @@ sent_history = "sent_history"
 training_data = "training_data"
 
 #connect to the database
-con = sqlite3.connect("context.db")
+con = sqlite3.connect("context.db", check_same_thread=False)
 #enable foreign keys
 con.execute("PRAGMA foreign_keys = ON")
 cur = con.cursor()
+
+def set_database(connection):
+    con = connection
+    con.execute("PRAGMA foreign_keys = ON")
+    cur = con.cursor()
+
 
 #Will create a user, inserting a row in both tables to keep track of their parameters and their overall messages counts
 def create_user():
@@ -139,70 +145,71 @@ def get_recipient_lang(sent_id):
     return decision_lang
 
 def update_history(sent_id, lang):
-    #increment counts for desired language
-    cur.execute(f"""
-            UPDATE {sent_history} SET {lang} = {lang} + 1
-            WHERE sent_id = {sent_id}
-        """)
-    user_id = cur.execute(f"SELECT user_id FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()[0][0]
-    all_convos_id = -1 * user_id
-    cur.execute(f"""
-            UPDATE {sent_history} SET {lang} = {lang} + 1
-            WHERE sent_id = {all_convos_id}
-        """)
-    
-    #increment counts for totals
-    cur.execute(f"""
-            UPDATE {sent_history} SET total = total + 1
-            WHERE sent_id = {sent_id}
-        """)
-    cur.execute(f"""
-            UPDATE {sent_history} SET total = total + 1
-            WHERE sent_id = {all_convos_id}
-        """)
+    with con:
+        #increment counts for desired language
+        cur.execute(f"""
+                UPDATE {sent_history} SET {lang} = {lang} + 1
+                WHERE sent_id = {sent_id}
+            """)
+        user_id = cur.execute(f"SELECT user_id FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()[0][0]
+        all_convos_id = -1 * user_id
+        cur.execute(f"""
+                UPDATE {sent_history} SET {lang} = {lang} + 1
+                WHERE sent_id = {all_convos_id}
+            """)
+        
+        #increment counts for totals
+        cur.execute(f"""
+                UPDATE {sent_history} SET total = total + 1
+                WHERE sent_id = {sent_id}
+            """)
+        cur.execute(f"""
+                UPDATE {sent_history} SET total = total + 1
+                WHERE sent_id = {all_convos_id}
+            """)
 
-    #set most recent language sent
-    cur.execute(f"""
-            UPDATE {sent_history} SET last_message_lang = \'{lang}\'
-            WHERE sent_id = {sent_id}
-        """)
-    
-    #commit all above changes
-    con.commit()
+        #set most recent language sent
+        cur.execute(f"""
+                UPDATE {sent_history} SET last_message_lang = \'{lang}\'
+                WHERE sent_id = {sent_id}
+            """)
+        
+        #commit all above changes
+        con.commit()
 
-    
-    #find max for this conversation
-    row = cur.execute(f"""SELECT *
-        FROM {sent_history} 
-        WHERE sent_id = {sent_id}""").fetchone()
-    #slice 6 columns at beginning of row to only get languages, don't include total
-    row_list = list(row)[6:-1]
-    max_count = max(row_list)
-    lang_index = row_list.index(max_count)
+        
+        #find max for this conversation
+        row = cur.execute(f"""SELECT *
+            FROM {sent_history} 
+            WHERE sent_id = {sent_id}""").fetchone()
+        #slice 6 columns at beginning of row to only get languages, don't include total
+        row_list = list(row)[6:-1]
+        max_count = max(row_list)
+        lang_index = row_list.index(max_count)
 
-    conv_lang = "\'" + list(languages.LANGUAGES.keys())[lang_index] + "\'"
+        conv_lang = "\'" + list(languages.LANGUAGES.keys())[lang_index] + "\'"
 
-    cur.execute(f"""
-            UPDATE {sent_history} SET conv_messages_lang = {conv_lang}
-            WHERE sent_id = {sent_id}
-        """)
-    
-    #find max for all conversations
-    row = cur.execute(f"""SELECT *
-        FROM {sent_history} 
-        WHERE sent_id = {all_convos_id}""").fetchone()
-    
-    row_list = list(row)[6:-1]
-    max_count = max(row_list)
-    lang_index = row_list.index(max_count)
+        cur.execute(f"""
+                UPDATE {sent_history} SET conv_messages_lang = {conv_lang}
+                WHERE sent_id = {sent_id}
+            """)
+        
+        #find max for all conversations
+        row = cur.execute(f"""SELECT *
+            FROM {sent_history} 
+            WHERE sent_id = {all_convos_id}""").fetchone()
+        
+        row_list = list(row)[6:-1]
+        max_count = max(row_list)
+        lang_index = row_list.index(max_count)
 
-    conv_lang = "\'" + list(languages.LANGUAGES.keys())[lang_index] + "\'"
+        conv_lang = "\'" + list(languages.LANGUAGES.keys())[lang_index] + "\'"
 
-    cur.execute(f"""
-            UPDATE {user} SET all_messages_lang = {conv_lang}
-            WHERE user_id = {user_id}
-        """)
-    con.commit()
+        cur.execute(f"""
+                UPDATE {user} SET all_messages_lang = {conv_lang}
+                WHERE user_id = {user_id}
+            """)
+        con.commit()
 
 
 
