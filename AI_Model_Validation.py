@@ -40,6 +40,22 @@ def accuracy(model, X, y):
     accuracy = accuracy_score(y_test, y_pred)
     print(accuracy)
 
+def compare_accuracy(model, X, y):
+    print("Accuracy: ")
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+    # predict the labels for the test data
+    y_pred_model = model.predict(X_test)
+
+    y_pred_train = model.predict(X_train)
+
+    # compute the accuracy of the model
+    model_accuracy = accuracy_score(y_test, y_pred_model)
+    train_accuracy = accuracy_score(y_train, y_pred_train)
+    print("model accuracy: ", model_accuracy)
+    print("training data accuracy: ", train_accuracy)
+
+
 #creates a confusion matrix for the model
 #pass in a saved AI model, parameters, and labels
 def confusion_matrix(model, X, y):
@@ -100,6 +116,7 @@ def validate_partial_langs_and_id(model):
     accuracy(model, X, y)
     #confusion_matrix(gnb_partial_langs, X, y)
     find_f1_score(model, X, y)
+    compare_accuracy(model, X, y)
 
 #runs all validations above on model using all_langs_and_id_data.csv
 #pass in a saved AI model
@@ -119,29 +136,34 @@ def validate_all_langs_and_id(model):
     accuracy(model, X, y)
     #confusion_matrix(gnb_partial_langs, X, y)
     find_f1_score(model, X, y)
+    compare_accuracy(model, X, y)
 
 #calls all validations on saved models
 if __name__ == '__main__':
-    print("GNB model with partial langs and id data: ")
-    gnb_partial_langs = load('AI_model_pkl_files/gnb_partial_langs_and_id.pkl')
-    validate_partial_langs_and_id(gnb_partial_langs)
+    #print("GNB model with partial langs and id data: ")
+    #gnb_partial_langs = load('AI_model_pkl_files/gnb_partial_langs_and_id.pkl')
+    #validate_partial_langs_and_id(gnb_partial_langs)
 
-    print("K Nearest model with partial langs and id data: ")
-    kNearest_partial_langs = load('AI_model_pkl_files/kNearest_partial_langs_and_id.pkl')
-    validate_partial_langs_and_id(kNearest_partial_langs)
+    #print("K Nearest model with partial langs and id data: ")
+    #kNearest_partial_langs = load('AI_model_pkl_files/kNearest_partial_langs_and_id.pkl')
+    #validate_partial_langs_and_id(kNearest_partial_langs)
 
-    print("Decision Tree model with partial langs and id data: ")
-    decision_tree_partial_langs = load('AI_model_pkl_files/decision_tree_partial_langs_and_id.pkl')
-    validate_partial_langs_and_id(decision_tree_partial_langs)
+    #print("Decision Tree model with partial langs and id data: ")
+    #decision_tree_partial_langs = load('AI_model_pkl_files/decision_tree_partial_langs_and_id.pkl')
+    #validate_partial_langs_and_id(decision_tree_partial_langs)
 
-    print("GNB model with all langs and id data: ")
-    gnb_all_langs = load('AI_model_pkl_files/gnb_all_langs_and_id.pkl')
-    validate_all_langs_and_id(gnb_all_langs)
+    #print("GNB model with all langs and id data: ")
+    #gnb_all_langs = load('AI_model_pkl_files/gnb_all_langs_and_id.pkl')
+    #validate_all_langs_and_id(gnb_all_langs)
 
-    print("K Nearest model with all langs and id data: ")
-    kNearest_all_langs = load('AI_model_pkl_files/kNearest_all_langs_and_id.pkl')
-    validate_all_langs_and_id(kNearest_all_langs)
+    #print("K Nearest model with all langs and id data: ")
+    #kNearest_all_langs = load('AI_model_pkl_files/kNearest_all_langs_and_id.pkl')
+    #validate_all_langs_and_id(kNearest_all_langs)
 
-    print("Decision Tree model with all langs and id data: ")
-    decision_tree_all_langs = load('AI_model_pkl_files/decision_tree_all_langs_and_id.pkl')
-    validate_all_langs_and_id(decision_tree_all_langs)
+    #print("Decision Tree model with all langs and id data: ")
+    #decision_tree_all_langs = load('AI_model_pkl_files/decision_tree_all_langs_and_id.pkl')
+    #validate_all_langs_and_id(decision_tree_all_langs)
+
+    print("Random Forest model with partial langs and id data: ")
+    random_forest_partial_langs = load('AI_model_pkl_files/random_forest_partial_langs_and_id.pkl')
+    validate_partial_langs_and_id(random_forest_partial_langs)
