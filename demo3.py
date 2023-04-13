@@ -156,8 +156,8 @@ if selected == 'Send Message':
             conv_messages_lang = languages.LANGUAGES.get(params.get('conv_messages_lang'))
             last_message_lang = languages.LANGUAGES.get(params.get('last_message_lang'))
             st.markdown(f'Top language of the messages that {receiver} has sent in all conversations: **{all_messages_lang}**')
-            st.markdown(f'Top language of the messages that {receiver} has sent in this conversation with {sender}: **{conv_messages_lang}**')
-            st.markdown(f'Language of the last message that {receiver} has sent in this conversation with {sender}: **{last_message_lang}**')
+            st.markdown(f'Top language of the messages that {receiver} has sent to {sender}: **{conv_messages_lang}**')
+            st.markdown(f'Language of the last message that {receiver} has sent to {sender}: **{last_message_lang}**')
 
     else:
         st.error('Must create at least one conversation')
@@ -169,30 +169,38 @@ if selected == 'View User':
     user = st.selectbox("User:", users.keys(), index=0)
 
     #will list all of the conversations the user participates in
-    st.markdown(f'### sent_ids')
     ids = db.get_sent_ids(users[user])
-
     #user will always have their overall sending history, we need to check if they are in more than one row then
-    if len(ids) == 1:
-        st.markdown('User is not in any conversations')
+    if len(ids) > 1:
+        #will list the selected user's parameters
+        user_convos = get_user_convos(users[user])
+        recipients = dict([(i[1], i[0]) for i in user_convos])
+        recipient = st.selectbox("Choose Conversation:", recipients.keys())
+
+        parameters = db.get_all_sent_history_info(recipients.get(recipient))
+        
+
+        parameters.pop('is_all_messages')
+        parameters.pop('user_id')
+        parameters.pop('sent_id')
+        parameters.pop('recipient_history_id')
+
+        #will list relevant parameters given in get_all_sent_history_info
+        st.markdown(f'### {user}\'s Message History Information')
+        all_messages_lang = languages.LANGUAGES.get(parameters.pop('all_messages_lang'))
+        conv_messages_lang = languages.LANGUAGES.get(parameters.pop('conv_messages_lang'))
+        last_message_lang = languages.LANGUAGES.get(parameters.pop('last_message_lang'))
+        total = parameters.pop('total')
+        st.markdown(f'Top language of the messages that {user} has sent in all conversations: **{all_messages_lang}**')
+        st.markdown(f'Top language of the messages that {user} has sent to {recipient}: **{conv_messages_lang}**')
+        st.markdown(f'Language of the last message that {user} has sent to {recipient}: **{last_message_lang}**')
+
+        for item in parameters.items():
+            st.markdown(f'Number of messages sent in {languages.LANGUAGES.get(item[0])}' + ': ' + f'{item[1]}')
+
+        st.markdown(f'Total messages that {user} has sent to {recipient}: **{total}**')
     else:
-        for id in ids:
-            #don't need to see their sent history row
-            if id > 0:
-                st.markdown(f'{id}')
-
-    #will list the selected user's parameters
-    st.markdown(f'### parameters')
-
-    user_convos = get_user_convos(users[user])
-    conversation = st.selectbox("Choose Conversation:", user_convos)
-
-    parameters = db.get_all_sent_history_info(conversation[0])
-
-    #will list each parameter given in get_all_sent_history_info except for is_all_messages
-    parameters.pop('is_all_messages')
-    for item in parameters.items():
-        st.markdown(f'{item[0]}' + ': ' + f'{item[1]}')
+        st.error(f'{user} is not in any conversations')
 
 
 
