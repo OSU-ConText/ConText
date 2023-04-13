@@ -160,14 +160,14 @@ def test_get_attr_from_sent_history():
 def test_get_attr_from_sent_history_1():
     uid = database.create_user()
     sid = database.create_sent_history(uid, 1)
-    database.update_history(sid[0], "af")
+    database.update_history(sid[0], "en")
     assert database_helper.get_attr_from_sent_history("user_id",sid[0]) == uid
     assert database_helper.get_attr_from_sent_history("sent_id",sid[0]) == sid[0]
     assert database_helper.get_attr_from_sent_history("recipient_history_id",sid[0]) == sid[1]
-    assert database_helper.get_attr_from_sent_history("af",sid[0]) == 1
-    assert database_helper.get_attr_from_sent_history("en",sid[0]) == 0
-    assert database_helper.get_attr_from_sent_history("conv_messages_lang",sid[0]) == 'af'
-    assert database_helper.get_attr_from_sent_history("last_message_lang",sid[0]) == 'af'
+    assert database_helper.get_attr_from_sent_history("ru",sid[0]) == 0
+    assert database_helper.get_attr_from_sent_history("en",sid[0]) == 1
+    assert database_helper.get_attr_from_sent_history("conv_messages_lang",sid[0]) == 'en'
+    assert database_helper.get_attr_from_sent_history("last_message_lang",sid[0]) == 'en'
 
 def test_update_history():
     uid1 = database.create_user()
@@ -209,23 +209,21 @@ def test_update_history():
     uid1 = database.create_user()
     uid2 = database.create_user()
     info = database.get_all_sent_history_info(-uid1)
-    database.update_history(ids[0], 'zu')
-    database.update_history(ids[0], 'zu')
 
 def test_update_history_1():
     uid1 = database.create_user()
     uid2 = database.create_user()
     ids = database.create_sent_history(uid1, uid2)
-    database.update_history(ids[0], 'zu')
+    database.update_history(ids[0], 'en')
     info = database.get_all_sent_history_info(ids[0])
     assert info.get("sent_id") == str(ids[0])
     assert info.get("user_id") == str(uid1)
     assert info.get("recipient_history_id") == str(ids[1])
-    assert info.get("conv_messages_lang") == "zu"
-    assert info.get("all_messages_lang") == "zu"
-    assert info.get("last_message_lang") == "zu"
+    assert info.get("conv_messages_lang") == "en"
+    assert info.get("all_messages_lang") == "en"
+    assert info.get("last_message_lang") == "en"
     assert info.get("is_all_messages") == "False"
-    assert info.get("zu") == str(1)
+    assert info.get("en") == str(1)
     assert info.get("total") == str(1)
 
 def test_get_sent_ids():
@@ -353,8 +351,8 @@ def test_get_all_sent_history_info_3():
     database.update_history(sent_id, "fr")
     database.update_history(sent_id, "en")
     database.update_history(sent_id, "en")
-    database.update_history(sent_id, "af")
-    database.update_history(sent_id, "af")
+    database.update_history(sent_id, "ru")
+    database.update_history(sent_id, "ru")
     user3 = database.create_user()
     sent_id2 = database.create_sent_history(user_id, user3)[0]
     database.update_history(sent_id2, "es")
@@ -375,7 +373,7 @@ def test_get_all_sent_history_info_3():
     assert info.get("es") == str(6)
     assert info.get("en") == str(5)
     assert info.get("fr") == str(2)
-    assert info.get("af") == str(2)
+    assert info.get("ru") == str(2)
     assert info.get("total") == str(15)
 
 
