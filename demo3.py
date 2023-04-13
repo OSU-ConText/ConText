@@ -5,7 +5,7 @@ import database as db
 from googletrans import Translator
 import sqlite3 
 import database_helper as dbh
-import data_generation.messageCreation as mc
+import messageCreation as mc
 import languages
 import re
 
@@ -117,37 +117,90 @@ if selected == 'Create Conversation':
 
 if selected == 'Send Message':
     st.markdown(f'### Send a Message')  
-    if len(convos) > 0:                    
-        conversation = st.selectbox("Choose Conversation:",convos)
-        message_creation = st.radio("How would you like the message to be created?", ["Generate message", "Type message"],
-                                    index=1)#,on_change=st.experimental_rerun)
-        if (message_creation == "Type message"):
-            text_message = st.text_input("Message (in English)")
-        else:
-            text_message = mc.generateMessage()
-        lang = st.selectbox("What language would you like to send the message in",languages.LANGUAGES.values())
-        # Every form must have a submit button.
-        submitted = st.button("Submit")
+    if "text_sent" not in st.session_state:
+        st.session_state.text_sent = False
+    if "correct" not in st.session_state:
+        st.session_state.correct = False
+    if "incorrect" not in st.session_state:
+        st.session_state.incorrect = False
+    if "correct_lang_submitted" not in st.session_state:
+        st.session_state.correct_lang_submitted = False
+    if len(convos) > 0:  
+        if st.session_state.text_sent: 
+            st.selectbox("Choose Conversation:",convos,disabled=True)
+            st.radio("How would you like the message to be created?", ["Generate message", "Type message"],
+                                        index=1,disabled=True)
+            if (st.session_state.message_creation == "Type message"):
+                st.session_state.text_message = st.text_input("Message (in English)",disabled=True)
+            st.session_state.lang = st.selectbox("What language would you like to send the message in",languages.LANGUAGES.values(),disabled=True)
+            # Every form must have a submit button.
+            click = st.button("Submit",disabled=True)
+        else:          
+            st.session_state.conversation = st.selectbox("Choose Conversation:",convos)
+            st.session_state.message_creation = st.radio("How would you like the message to be created?", ["Generate message", "Type message"],
+                                        index=1)#,on_change=st.experimental_rerun)
+            if (st.session_state.message_creation == "Type message"):
+                st.session_state.text_message = st.text_input("Message (in English)")
+            else:
+                st.session_state.text_message = mc.generateMessage()
+            st.session_state.lang = st.selectbox("What language would you like to send the message in",languages.LANGUAGES.values())
+            # Every form must have a submit button.
+            click = st.button("Submit")
 
-        if submitted:
+            if click:
+                st.session_state.text_sent = True
+
+        if st.session_state.text_sent:
             translator = Translator()
-            sent_message = translator.translate(text_message,dest=lang).text
+            sent_message = translator.translate(st.session_state.text_message,dest=st.session_state.lang).text
             st.markdown(f'Your message: **{sent_message}**')
-            str = re.split('=|,',conversation)
+            str = re.split('=|,',st.session_state.conversation)
             sender = str[1].strip()
             receiver = str[3].strip()
             sent_id = get_sent_id(sender,receiver)[0]
-            abbr = {i for i in languages.LANGUAGES if languages.LANGUAGES[i]==lang}.pop()
+            abbr = {i for i in languages.LANGUAGES if languages.LANGUAGES[i]==(st.session_state.lang)}.pop()
 
             db.update_history(sent_id,abbr)
-            
             
             received_lang = db.get_recipient_lang(sent_id)
             received_message = translator.translate(sent_message,dest = received_lang).text
             st.success(f"Sent {sender}'s message to {receiver}")
             st.markdown(f'{receiver} received the message in: **{languages.LANGUAGES.get(received_lang)}**' )
             st.markdown(f'The message {receiver} received is: **{received_message}**')
-            st.markdown('### Why?')
+            st.markdown(f"Did we get that translation language right?")
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.session_state.incorrect:
+                    st.button("Correct",disabled=True)
+                else:
+                    correct = st.button("Correct")
+                    if correct:
+                        st.session_state.correct = True
+                    if st.session_state.correct:
+                        st.success(f"Nice!")
+
+            with col2:
+                if st.session_state.correct or st.session_state.correct_lang_submitted:
+                    st.button("Incorrect",disabled=True)
+                else:
+                    incorrect = st.button("Incorrect")
+
+                    if incorrect:
+                        st.session_state.incorrect = True
+
+                if st.session_state.incorrect:
+                    with st.form("incorrect_form", clear_on_submit=False):
+
+                        if st.session_state.correct_lang_submitted:
+                            st.selectbox("What language should it have been?",languages.LANGUAGES.values(),disabled=True)
+                            st.form_submit_button("OK",disabled=True)
+                        else:
+                            lang = st.selectbox("What language should it have been?",languages.LANGUAGES.values())
+                            pressed = st.form_submit_button("OK")
+                            if pressed:
+                                st.session_state.correct_lang_submitted = True
+            #NEED TO DO SOMETHING WITH THIS
+            st.markdown('### How did we get the translation language?')
             st.markdown(f'We used the data from the messages {receiver} has sent to decide!')
 
             recipient_history_id = db.get_all_sent_history_info(sent_id).get("recipient_history_id")
@@ -159,6 +212,10 @@ if selected == 'Send Message':
             st.markdown(f'Top language of the messages that {receiver} has sent to {sender}: **{conv_messages_lang}**')
             st.markdown(f'Language of the last message that {receiver} has sent to {sender}: **{last_message_lang}**')
 
+            try_again = st.button("Try again")
+            if try_again:
+                for key in st.session_state.keys():
+                    del st.session_state[key]
     else:
         st.error('Must create at least one conversation')
 
