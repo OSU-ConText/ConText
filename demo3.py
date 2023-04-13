@@ -165,42 +165,44 @@ if selected == 'Send Message':
 if selected == 'View User':
     st.markdown(f'### View User')
 
-    #creates a select box for all of the users
-    user = st.selectbox("User:", users.keys(), index=0)
+    if len(users) >= 1:
+        #creates a select box for all of the users
+        user = st.selectbox("User:", users.keys(), index=0)
 
-    #will list all of the conversations the user participates in
-    ids = db.get_sent_ids(users[user])
-    #user will always have their overall sending history, we need to check if they are in more than one row then
-    if len(ids) > 1:
-        #will list the selected user's parameters
-        user_convos = get_user_convos(users[user])
-        recipients = dict([(i[1], i[0]) for i in user_convos])
-        recipient = st.selectbox("Choose Conversation:", recipients.keys())
+        #will list all of the conversations the user participates in
+        ids = db.get_sent_ids(users[user])
+        #user will always have their overall sending history, we need to check if they are in more than one row then
+        if len(ids) > 1:
+            #will list the selected user's parameters
+            user_convos = get_user_convos(users[user])
+            recipients = dict([(i[1], i[0]) for i in user_convos])
+            recipient = st.selectbox("Choose Conversation:", recipients.keys())
 
-        parameters = db.get_all_sent_history_info(recipients.get(recipient))
-        
+            parameters = db.get_all_sent_history_info(recipients.get(recipient))
 
-        parameters.pop('is_all_messages')
-        parameters.pop('user_id')
-        parameters.pop('sent_id')
-        parameters.pop('recipient_history_id')
+            parameters.pop('is_all_messages')
+            parameters.pop('user_id')
+            parameters.pop('sent_id')
+            parameters.pop('recipient_history_id')
 
-        #will list relevant parameters given in get_all_sent_history_info
-        st.markdown(f'### {user}\'s Message History Information')
-        all_messages_lang = languages.LANGUAGES.get(parameters.pop('all_messages_lang'))
-        conv_messages_lang = languages.LANGUAGES.get(parameters.pop('conv_messages_lang'))
-        last_message_lang = languages.LANGUAGES.get(parameters.pop('last_message_lang'))
-        total = parameters.pop('total')
-        st.markdown(f'Top language of the messages that {user} has sent in all conversations: **{all_messages_lang}**')
-        st.markdown(f'Top language of the messages that {user} has sent to {recipient}: **{conv_messages_lang}**')
-        st.markdown(f'Language of the last message that {user} has sent to {recipient}: **{last_message_lang}**')
+            #will list relevant parameters given in get_all_sent_history_info
+            st.markdown(f'### {user}\'s Message History Information')
+            all_messages_lang = languages.LANGUAGES.get(parameters.pop('all_messages_lang'))
+            conv_messages_lang = languages.LANGUAGES.get(parameters.pop('conv_messages_lang'))
+            last_message_lang = languages.LANGUAGES.get(parameters.pop('last_message_lang'))
+            total = parameters.pop('total')
+            st.markdown(f'Top language of the messages that {user} has sent in all conversations: **{all_messages_lang}**')
+            st.markdown(f'Top language of the messages that {user} has sent to {recipient}: **{conv_messages_lang}**')
+            st.markdown(f'Language of the last message that {user} has sent to {recipient}: **{last_message_lang}**')
 
-        for item in parameters.items():
-            st.markdown(f'Number of messages sent in {languages.LANGUAGES.get(item[0])}' + ': ' + f'{item[1]}')
+            for item in parameters.items():
+                st.markdown(f'Number of messages sent in {languages.LANGUAGES.get(item[0])}' + ': ' + f'{item[1]}')
 
-        st.markdown(f'Total messages that {user} has sent to {recipient}: **{total}**')
-    else:
-        st.error(f'{user} is not in any conversations')
+            st.markdown(f'Total messages that {user} has sent to {recipient}: **{total}**')
+        else:
+            st.error(f'{user} is not in any conversations')
 
+    else: 
+        st.info('Must create at least one user')
 
 
