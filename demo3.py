@@ -25,6 +25,10 @@ def get_sent_id(sender,receiver):
     with db.con:
         return db.cur.execute(f"SELECT sent_id from conversations WHERE sender_name LIKE \'{sender}\' and receiver_name LIKE \'{receiver}\'").fetchone()
 
+def get_user_convos(user_id):
+    #st.markdown(f'{user_id}')
+    with db.con:
+        return db.cur.execute(f"SELECT sent_id, receiver_name from conversations WHERE sender_id LIKE \'{user_id}\'").fetchall()
  
 def insert_user(name, id):
     with db.con:
@@ -161,9 +165,10 @@ if selected == 'Send Message':
 if selected == 'View User':
     st.markdown(f'### View User')
 
-
+    #creates a select box for all of the users
     user = st.selectbox("User:", users.keys(), index=0)
 
+    #will list all of the conversations the user participates in
     st.markdown(f'### sent_ids')
     ids = db.get_sent_ids(users[user])
 
@@ -175,3 +180,19 @@ if selected == 'View User':
             #don't need to see their sent history row
             if id > 0:
                 st.markdown(f'{id}')
+
+    #will list the selected user's parameters
+    st.markdown(f'### parameters')
+
+    user_convos = get_user_convos(users[user])
+    conversation = st.selectbox("Choose Conversation:", user_convos)
+
+    parameters = db.get_all_sent_history_info(conversation[0])
+
+    #will list each parameter given in get_all_sent_history_info except for is_all_messages
+    parameters.pop('is_all_messages')
+    for item in parameters.items():
+        st.markdown(f'{item[0]}' + ': ' + f'{item[1]}')
+
+
+

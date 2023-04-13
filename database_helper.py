@@ -2,18 +2,9 @@ import languages
 import database
 import sqlite3
 
-
-
 user = "user"
 sent_history = "sent_history"
 training_data = "training_data"
-
-#connect to the database
-con = sqlite3.connect("context.db", check_same_thread=False)
-#enable foreign keys
-con.execute("PRAGMA foreign_keys = ON")
-cur = con.cursor()
-
 
 #Will return True if the table exists, False if it does not
 def check_table_existence(table_name, creating=False):
