@@ -47,7 +47,7 @@ while (not db_created):
 
      
 
-options = ['Create User', 'Create Conversation', 'Send Message']
+options = ['Create User', 'Create Conversation', 'Send Message', 'View User']
 selected = st.sidebar.radio('Choose Functionality:', options)
 
 q = query_usernames()
@@ -155,6 +155,23 @@ if selected == 'Send Message':
             st.markdown(f'Top language of the messages that {receiver} has sent in this conversation with {sender}: **{conv_messages_lang}**')
             st.markdown(f'Language of the last message that {receiver} has sent in this conversation with {sender}: **{last_message_lang}**')
 
-
     else:
         st.error('Must create at least one conversation')
+
+if selected == 'View User':
+    st.markdown(f'### View User')
+
+
+    user = st.selectbox("User:", users.keys(), index=0)
+
+    st.markdown(f'### sent_ids')
+    ids = db.get_sent_ids(users[user])
+
+    #user will always have their overall sending history, we need to check if they are in more than one row then
+    if len(ids) == 1:
+        st.markdown('User is not in any conversations')
+    else:
+        for id in ids:
+            #don't need to see their sent history row
+            if id > 0:
+                st.markdown(f'{id}')
