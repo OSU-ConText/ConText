@@ -37,7 +37,8 @@ def insert_conversation(sent_id, sender_id, sender_name, receiver_id, receiver_n
             
             VALUES ({sent_id}, {sender_id},\'{sender_name}\',{receiver_id},\'{receiver_name}\')''')
 
-#dbh.create_tables()
+if(dbh.check_table_existence("usernames", True) == False):
+    dbh.create_tables()
 options = ['Create User', 'Create Conversation', 'Send Message']
 selected = st.sidebar.radio('Choose Functionality:', options)
 
