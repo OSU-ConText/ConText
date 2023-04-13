@@ -165,34 +165,39 @@ if selected == 'Send Message':
 if selected == 'View User':
     st.markdown(f'### View User')
 
-    #creates a select box for all of the users
-    user = st.selectbox("User:", users.keys(), index=0)
+    if len(users) >= 1:
+        #creates a select box for all of the users
+        user = st.selectbox("User:", users.keys(), index=0)
 
-    #will list all of the conversations the user participates in
-    st.markdown(f'### sent_ids')
-    ids = db.get_sent_ids(users[user])
+        #will list all of the conversations the user participates in
+        st.markdown(f'### sent_ids')
+        ids = db.get_sent_ids(users[user])
 
-    #user will always have their overall sending history, we need to check if they are in more than one row then
-    if len(ids) == 1:
-        st.markdown('User is not in any conversations')
-    else:
-        for id in ids:
-            #don't need to see their sent history row
-            if id > 0:
-                st.markdown(f'{id}')
+        #user will always have their overall sending history, we need to check if they are in more than one row then
+        if len(ids) == 1:
+            st.markdown('User is not in any conversations')
+        else:
+            for id in ids:
+                #don't need to see their sent history row
+                if id > 0:
+                    st.markdown(f'{id}')
 
-    #will list the selected user's parameters
-    st.markdown(f'### parameters')
+        #will list the selected user's parameters
+        st.markdown(f'### parameters')
 
-    user_convos = get_user_convos(users[user])
-    conversation = st.selectbox("Choose Conversation:", user_convos)
+        user_convos = get_user_convos(users[user])
+        if len(user_convos) >= 1:
+            conversation = st.selectbox("Choose Conversation:", user_convos)
 
-    parameters = db.get_all_sent_history_info(conversation[0])
+            parameters = db.get_all_sent_history_info(conversation[0])
 
-    #will list each parameter given in get_all_sent_history_info except for is_all_messages
-    parameters.pop('is_all_messages')
-    for item in parameters.items():
-        st.markdown(f'{item[0]}' + ': ' + f'{item[1]}')
-
+            #will list each parameter given in get_all_sent_history_info except for is_all_messages
+            parameters.pop('is_all_messages')
+            for item in parameters.items():
+                st.markdown(f'{item[0]}' + ': ' + f'{item[1]}')
+        else:
+            st.info('User must be in conversation to view parameters')
+    else: 
+        st.info('Must create at least one user')
 
 
