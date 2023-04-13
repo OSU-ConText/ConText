@@ -125,10 +125,11 @@ def make_lang_decision(all_lang, conv_lang, last_lang):
     param_list = [conv_lang, last_lang, all_lang]
     
     for i in range(0, parameter_count):
-        if param_list[i] in parameter_map:
-            parameter_map[param_list[i]] += 1
-        else:
-            parameter_map[param_list[i]] = 1
+        if param_list[i] != None:
+            if param_list[i] in parameter_map:
+                parameter_map[param_list[i]] += 1
+            else:
+                parameter_map[param_list[i]] = 1
         #print(parameter_map)
         
     lang = None
