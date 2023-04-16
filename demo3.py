@@ -51,8 +51,17 @@ def correct_translation():
 def incorrect_translation():
     st.session_state.send_message_list.append('incorrect_translation')
 
-def submit_correct_lang():
+
+def submit_correct_lang(lang):
     st.session_state.send_message_list.append('correct_lang_submitted')
+    with db.con:
+        st.write(f'''UPDATE table_with_all_langs_and_id 
+            SET label = \'{lang}\'
+            WHERE row_id = (SELECT MAX(row_id) FROM table_with_all_langs_and_id)''')
+        db.cur.execute(f'''UPDATE table_with_all_langs_and_id 
+            SET label = \'{lang}\'
+            WHERE row_id = (SELECT MAX(row_id) FROM table_with_all_langs_and_id)''')
+    
     
 db_created = dbh.check_table_existence("usernames", True)
 while (not db_created):
@@ -131,14 +140,6 @@ if selected == 'Send Message':
     st.markdown(f'### Send a Message')  
     if "send_message_list" not in st.session_state:
         st.session_state.send_message_list = []
-    # if "text_sent" not in st.session_state:
-    #     st.session_state.text_sent = False
-    # if "correct" not in st.session_state:
-    #     st.session_state.correct = False
-    # if "incorrect" not in st.session_state:
-    #     st.session_state.incorrect = False
-    # if "correct_lang_submitted" not in st.session_state:
-    #     st.session_state.correct_lang_submitted = False
     if len(convos) > 0:  
         if 'text_sent' in st.session_state.send_message_list: 
             st.selectbox("Choose Conversation:",convos,disabled=True)
@@ -147,18 +148,16 @@ if selected == 'Send Message':
             if (st.session_state.message_creation == "Type message"):
                 st.session_state.text_message = st.text_input("Message (in English)",disabled=True)
             st.session_state.lang = st.selectbox("What language would you like to send the message in",languages.LANGUAGES.values(),disabled=True)
-            # Every form must have a submit button.
             click = st.button("Submit",disabled=True)
         else:          
             st.session_state.conversation = st.selectbox("Choose Conversation:",convos)
             st.session_state.message_creation = st.radio("How would you like the message to be created?", ["Generate message", "Type message"],
-                                        index=1)#,on_change=st.experimental_rerun)
+                                        index=1)
             if (st.session_state.message_creation == "Type message"):
                 st.session_state.text_message = st.text_input("Message (in English)")
             else:
                 st.session_state.text_message = mc.generateMessage()
             st.session_state.lang = st.selectbox("What language would you like to send the message in",languages.LANGUAGES.values())
-            # Every form must have a submit button.
             click = st.button("Submit", on_click=submit_text)
 
 
@@ -174,17 +173,19 @@ if selected == 'Send Message':
             abbr = {i for i in languages.LANGUAGES if languages.LANGUAGES[i]==(st.session_state.lang)}.pop()
 
             db.update_history(sent_id,abbr)
-            
-            received_lang = db.get_recipient_lang(sent_id)
-            received_message = translator.translate(sent_message,dest = received_lang).text
-            st.success(f"Sent {sender}'s message to {receiver}")
-            st.markdown(f'{receiver} received the message in: **{languages.LANGUAGES.get(received_lang)}**' )
-            st.markdown(f'The message {receiver} received is: **{received_message}**')
-            st.markdown(f"Did we get that translation language right?")
-            col1, col2 = st.columns(2)
+
             correct = 'correct_translation' in st.session_state.send_message_list
             incorrect = 'incorrect_translation' in st.session_state.send_message_list
             correct_lang_submitted = 'correct_lang_submitted' in st.session_state.send_message_list
+            
+            if not (correct or incorrect or correct_lang_submitted):
+                st.session_state.received_lang = db.get_recipient_lang(sent_id)
+            received_message = translator.translate(sent_message,dest = st.session_state.received_lang).text
+            st.success(f"Sent {sender}'s message to {receiver}")
+            st.markdown(f'{receiver} received the message in: **{languages.LANGUAGES.get(st.session_state.received_lang)}**' )
+            st.markdown(f'The message {receiver} received is: **{received_message}**')
+            st.markdown(f"Did we get that translation language right?")
+            col1, col2 = st.columns(2)
             
             with col1:
                 if not (correct or incorrect or correct_lang_submitted):
@@ -194,15 +195,6 @@ if selected == 'Send Message':
                     st.button("Correct",disabled=True)
                     if correct:
                         st.success(f"Nice!")
-                # if st.session_state.correct or st.session_state.incorrect or st.session_state.correct_lang_submitted:
-                #     st.button("Correct",disabled=True)
-                #     if st.session_state.correct:
-                #         st.success(f"Nice!")
-                # else:
-                #     correct = st.button("Correct")
-                #     if correct:
-                #         st.session_state.correct = True
-
 
             with col2:
                 if not (correct or incorrect or correct_lang_submitted):
@@ -210,33 +202,18 @@ if selected == 'Send Message':
                 else:
                     st.button("Incorrect",disabled=True)
                     if incorrect:
-                        with st.form("incorrect_form", clear_on_submit=False):
+                        #with st.form("incorrect_form", clear_on_submit=False):
 
                             if correct_lang_submitted:
                                 st.selectbox("What language should it have been?",languages.LANGUAGES.values(),disabled=True)
-                                st.form_submit_button("OK",disabled=True)
+                                st.button("OK",disabled=True)
                             else:
                                 lang = st.selectbox("What language should it have been?",languages.LANGUAGES.values())
-                                st.form_submit_button("OK",on_click=submit_correct_lang)
-                # if st.session_state.correct or st.session_state.incorrect or st.session_state.correct_lang_submitted:
-                #     st.button("Incorrect",disabled=True)
+                                abbr = {i for i in languages.LANGUAGES if languages.LANGUAGES[i]==(lang)}.pop()
 
-                #     if st.session_state.incorrect:
-                #         with st.form("incorrect_form", clear_on_submit=False):
+                                st.button("OK",on_click=submit_correct_lang, args=(abbr,))
 
-                #             if st.session_state.correct_lang_submitted:
-                #                 st.selectbox("What language should it have been?",languages.LANGUAGES.values(),disabled=True)
-                #                 st.form_submit_button("OK",disabled=True)
-                #             else:
-                #                 lang = st.selectbox("What language should it have been?",languages.LANGUAGES.values())
-                #                 pressed = st.form_submit_button("OK")
-                #                 if pressed:
-                #                     st.session_state.correct_lang_submitted = True
-                # else:
-                #     incorrect = st.button("Incorrect")
-                #     if incorrect:
-                #         st.session_state.incorrect = True
-
+            
             #NEED TO DO SOMETHING WITH THIS
             st.markdown('### How did we get the translation language?')
             st.markdown(f'We used the data from the messages {receiver} has sent to decide!')
