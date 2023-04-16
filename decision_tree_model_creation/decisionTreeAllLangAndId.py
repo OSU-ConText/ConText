@@ -16,7 +16,7 @@ with open('csv_files/all_langs_and_id_data.csv', 'r') as f:
     data = list(reader)
 
 # split data into features and labels
-X = [[(float(row[i])) for i in range(1, len(row)-1)] for row in data]
+X = [[(float(row[i])) for i in range(1, len(row))] for row in data]
 
 y = [str(row[0]) for row in data]
 
