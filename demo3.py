@@ -58,6 +58,10 @@ def submit_correct_lang(lang):
         db.cur.execute(f'''UPDATE table_with_all_langs_and_id 
             SET label = \'{lang}\'
             WHERE row_id = (SELECT MAX(row_id) FROM table_with_all_langs_and_id)''')
+        
+def clear_session_state():
+    for key in st.session_state.keys():
+        del st.session_state[key]
     
     
 db_created = dbh.check_table_existence("usernames", True)
@@ -179,8 +183,8 @@ if selected == 'Send Message':
             incorrect = 'incorrect_translation' in st.session_state.send_message_list
             correct_lang_submitted = 'correct_lang_submitted' in st.session_state.send_message_list
             
+            #will rerun when next buttons pressed, so only set language and translation on the first run through
             if not (correct or incorrect or correct_lang_submitted):
-                # st.session_state.received_lang = db.get_recipient_lang(sent_id)
                 lang_list = db.get_recipient_lang(sent_id)
                 st.session_state.received_lang = lang_list[0]
                 st.session_state.ai_lang = lang_list[1]
@@ -233,10 +237,8 @@ if selected == 'Send Message':
             st.markdown(f'Top language of the messages that {receiver} has sent to {sender}: **{conv_messages_lang}**')
             st.markdown(f'Language of the last message that {receiver} has sent to {sender}: **{last_message_lang}**')
 
-            try_again = st.button("Try again")
-            if try_again:
-                for key in st.session_state.keys():
-                    del st.session_state[key]
+            try_again = st.button("Send another message", on_click=clear_session_state)
+
     else:
         st.error('Must create at least one conversation')
 
