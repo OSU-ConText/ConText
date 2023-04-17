@@ -12,13 +12,13 @@ from sklearn.datasets import make_classification
 
 
 # open the CSV file
-with open('csv_files/partial_langs_and_id_data.csv', 'r') as f:
+with open('csv_files/new_partial_langs_and_ids.csv', 'r') as f:
     reader = csv.reader(f)
     labels = next(reader)
     data = list(reader)
 
 # split data into features and labels
-X = [[(float(row[i])) for i in range(1, len(row)-1)] for row in data]
+X = [[(float(row[i])) for i in range(1, len(row))] for row in data]
 
 y = [str(row[0]) for row in data]
 

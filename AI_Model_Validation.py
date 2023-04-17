@@ -11,6 +11,7 @@ from sklearn.metrics import accuracy_score
 import languages
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import f1_score
+from sklearn import metrics
 
 #runs a k-fold cross validation on a model
 #pass in a saved AI model, parameters, and labels
@@ -59,29 +60,15 @@ def compare_accuracy(model, X, y):
 #creates a confusion matrix for the model
 #pass in a saved AI model, parameters, and labels
 def confusion_matrix(model, X, y):
-    #confustion matrix
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
     y_pred = model.predict(X_test)
-    mat = confusion_matrix(y_test, y_pred)
-    labels = list(languages.LANGUAGES.keys())
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    cm = ax.matshow(mat)
-    # plot the title, use y to leave some space before the labels
-    plt.title("Confusion matrix - langs and ids", y=1.2)
-    ax.set_xticklabels([''] + labels)
-    ax.set_yticklabels([''] + labels)
-    plt.setp(ax.get_xticklabels(), rotation=-30, ha="right", rotation_mode="anchor")
-    plt.xlabel("Predicted")
-    plt.ylabel("Actual")
-    # Loop over data dimensions and create text annotations.
-    for i in range(len(mat)):
-        for j in range(len(mat)):
-            text = ax.text(j, i, mat[i, j],
-                        ha="center", va="center", color="w")
-        # Create colorbar
-    fig.colorbar(cm)
-    plt.show()
+
+    confusion_matrix = metrics.confusion_matrix(y_test, y_pred)
+
+    cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix = confusion_matrix, display_labels = list(languages.LANGUAGES.keys()))
+
+    cm_display.plot()
+    plt.show() 
 
 #calculates the f1 score of a models predictions
 #pass in a saved AI model, parameters, and labels
@@ -108,7 +95,7 @@ def validate_partial_langs_and_id(model):
         labels = next(reader)
         #first_column = reader.columns[0]
         data = list(reader)
-    X = [[(float(row[i])) for i in range(1, len(row)-1)] for row in data]
+    X = [[(float(row[i])) for i in range(1, len(row))] for row in data]
     y = [str(row[0]) for row in data]
 
     #run validations
@@ -128,7 +115,7 @@ def validate_all_langs_and_id(model):
         labels = next(reader)
         #first_column = reader.columns[0]
         data = list(reader)
-    X = [[(float(row[i])) for i in range(1, len(row)-1)] for row in data]
+    X = [[(float(row[i])) for i in range(1, len(row))] for row in data]
     y = [str(row[0]) for row in data]
 
     #run validations
