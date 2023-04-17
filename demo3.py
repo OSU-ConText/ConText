@@ -162,11 +162,15 @@ if selected == 'Send Message':
 
             db.update_history(sent_id,abbr)
             
-            received_lang = db.get_recipient_lang(sent_id)
+            lang_list = db.get_recipient_lang(sent_id)
+            received_lang = lang_list[0]
+            ai_lang = lang_list[1]
             received_message = translator.translate(sent_message,dest = received_lang).text
             st.success(f"Sent {sender}'s message to {receiver}")
             st.markdown(f'{receiver} received the message in: **{languages.LANGUAGES.get(received_lang)}**' )
             st.markdown(f'The message {receiver} received is: **{received_message}**')
+            st.markdown(f'Our AI predicted the desired language to be: **{ai_lang}**')
+            st.markdown(f'The label for the language decision in this case was: **{received_lang}**')
             st.markdown(f"Did we get that translation language right?")
             col1, col2 = st.columns(2)
             with col1:

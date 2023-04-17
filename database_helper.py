@@ -1,6 +1,7 @@
 import languages
 import database
-import sqlite3
+from joblib import load
+import csv
 
 user = "user"
 sent_history = "sent_history"
@@ -145,6 +146,73 @@ def make_lang_decision(all_lang, conv_lang, last_lang):
         lang = max(parameter_map, key=parameter_map.get)
     #print(lang)
     return lang
+
+def ai_lang(all_lang, conv_lang, last_lang, decision_lang):
+    #construct data row
+    params = [all_lang, conv_lang, last_lang]
+    en, es, hi, fr, ar, bn, ru, pt, id, ja, de, pa, zh_cn = 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0
+
+    for param in params:
+        if param == 'en':
+            en += 1.0
+        elif param == 'es':
+            es += 1.0
+        elif param == 'hi':
+            hi += 1.0
+        elif param == 'fr':
+            fr += 1.0
+        elif param == 'ar':
+            ar += 1.0
+        elif param == 'bn':
+            bn += 1.0
+        elif param == 'ru':
+            ru += 1.0
+        elif param == 'pt':
+            pt += 1.0
+        elif param == 'id':
+            id += 1.0
+        elif param == 'ja':
+            ja += 1.0
+        elif param == 'de':
+            de += 1.0
+        elif param == 'pa':
+            pa += 1.0
+        elif param == 'zh-cn':
+            zh_cn += 1.0
+
+    data = [decision_lang, en, es, hi, fr, ar, bn, ru, pt, id, ja, de, pa, zh_cn]
+
+    #loading pickle file
+    file = open('AI_model_pkl_files/gnb_partial_langs_and_id.pkl', 'rb')
+
+    model = load(file)
+
+    file.close()
+
+    with open('csv_files/ai_decision.csv', 'w', newline='') as f:
+        #create new writer
+        writer = csv.writer(f)
+
+        #write row
+        writer.writerow(data)
+
+        #close file
+        f.close()
+
+    with open('csv_files/ai_decision.csv', 'r') as f:
+        #create new reader, get last row
+        reader = csv.reader(f)
+        data = list(reader)
+        X = [[(float(row[i])) for i in range(1, len(row) - 1)] for row in data]
+
+        #close file
+        f.close()
+
+    #make prediction
+    result = model.predict(X)
+
+    return result[0]
+
 
 def get_attr_from_sent_history(desiredAttr,sent_id):
     attr = database.cur.execute(f"SELECT {desiredAttr} FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()
