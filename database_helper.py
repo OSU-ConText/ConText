@@ -32,17 +32,19 @@ def get_language_columns():
 
 #Will create the needed tables if they do not already exist
 def create_tables():
-    with database.con:
+    #with database.con:
         if (check_table_existence(user, True) == False):
+            with database.con:
             #print(f'creating {user} table')
-            database.cur.execute(f'''CREATE TABLE {user}
+                database.cur.execute(f'''CREATE TABLE {user}
                 (user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 all_messages_lang TEXT DEFAULT NULL)''')
             #print(f'{user} table created')
 
         if (check_table_existence(sent_history, True) == False):
+            with database.con:
             #print(f'creating {sent_history} table')
-            database.cur.execute(f'''CREATE TABLE {sent_history}
+                database.cur.execute(f'''CREATE TABLE {sent_history}
                 (sent_id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 user_id INTEGER NOT NULL, 
                 recipient_history_id INTEGER, 
@@ -56,8 +58,9 @@ def create_tables():
             #print(f'{sent_history} table created')
 
         if (check_table_existence(training_data, True) == False):
+            with database.con:
             #print(f'creating {training_data} table')
-            database.cur.execute(f'''CREATE TABLE {training_data}
+                database.cur.execute(f'''CREATE TABLE {training_data}
                 (all_messages_lang TEXT,
                 conv_messages_lang TEXT, 
                 last_message_lang TEXT,
@@ -65,12 +68,14 @@ def create_tables():
             #print(f'{training_data} table created')
 
         if (check_table_existence('usernames', True) == False):
-            database.cur.execute('''CREATE TABLE usernames
+            with database.con:
+                database.cur.execute('''CREATE TABLE usernames
                 (user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 name TEXT DEFAULT NULL)''')
             
         if (check_table_existence('conversations', True) == False):
-            database.cur.execute('''CREATE TABLE conversations
+            with database.con:
+                database.cur.execute('''CREATE TABLE conversations
                 (sent_id INTEGER, 
                 sender_id INTEGER,
                 sender_name TEXT,

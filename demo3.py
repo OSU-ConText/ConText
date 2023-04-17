@@ -63,13 +63,13 @@ def clear_session_state():
     for key in st.session_state.keys():
         del st.session_state[key]
     
-    
-db_created = dbh.check_table_existence("usernames", True)
-while (not db_created):
+if "db_created" not in st.session_state:
+    st.session_state.db_created = False
+while (not st.session_state.db_created):
     with st.spinner('Creating database...'):
         dbh.create_tables()
         time.sleep(2)
-        db_created = dbh.check_table_existence("usernames", True)
+        st.session_state.db_created = dbh.check_table_existence("usernames", True)
 
      
 
@@ -144,16 +144,14 @@ if selected == 'Send Message':
     if len(convos) > 0:  
         if 'text_sent' in st.session_state.send_message_list: 
             st.selectbox("Choose Conversation:",convos,disabled=True)
-            st.radio("How would you like the message to be created?", ["Generate message", "Type message"],
-                                        index=1,disabled=True)
+            st.radio("How would you like the message to be created?", ["Type message","Generate message"],disabled=True)
             if (st.session_state.message_creation == "Type message"):
                 st.session_state.text_message = st.text_input("Message (in English)",disabled=True)
             st.session_state.lang = st.selectbox("What language would you like to send the message in",languages.LANGUAGES.values(),disabled=True)
             click = st.button("Submit",disabled=True)
         else:          
             st.session_state.conversation = st.selectbox("Choose Conversation:",convos)
-            st.session_state.message_creation = st.radio("How would you like the message to be created?", ["Generate message", "Type message"],
-                                        index=1)
+            st.session_state.message_creation = st.radio("How would you like the message to be created?", ["Type message","Generate message"])
             if (st.session_state.message_creation == "Type message"):
                 st.session_state.text_message = st.text_input("Message (in English)")
             else:
