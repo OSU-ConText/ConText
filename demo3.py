@@ -160,6 +160,10 @@ if selected == 'Send Message':
             sent_id = get_sent_id(sender,receiver)[0]
             abbr = {i for i in languages.LANGUAGES if languages.LANGUAGES[i]==(st.session_state.lang)}.pop()
 
+            #handle special case, cannot have '-' in SQLite
+            if abbr == 'zh-cn':
+                abbr = 'zh_cn'
+
             db.update_history(sent_id,abbr)
             
             received_lang = db.get_recipient_lang(sent_id)
