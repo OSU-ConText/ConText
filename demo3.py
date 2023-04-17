@@ -184,11 +184,12 @@ if selected == 'Send Message':
                 lang_list = db.get_recipient_lang(sent_id)
                 st.session_state.received_lang = lang_list[0]
                 st.session_state.ai_lang = lang_list[1]
-                st.session_state.received_message = translator.translate(sent_message,dest = st.session_state.ai_lang).text
+                ai_abbr = {i for i in languages.LANGUAGES if languages.LANGUAGES[i]==(st.session_state.lang)}.pop().replace('-','_')
+                st.session_state.received_message = translator.translate(sent_message,dest = ai_abbr).text
             st.success(f"Sent {sender}'s message to {receiver}")
             st.markdown(f'{receiver} received the message in: **{languages.LANGUAGES.get(st.session_state.received_lang)}**' )
             st.markdown(f'The message {receiver} received is: **{st.session_state.received_message}**')
-            st.markdown(f'\tNote: this was translated using our AI predicted language')
+            st.info(f'Note: this was translated using our AI predicted language')
             st.markdown(f'Our AI predicted the desired language to be: **{st.session_state.ai_lang}**')
             st.markdown(f'The label for the language decision in this case was: **{st.session_state.received_lang}**')
             st.markdown(f"Did we get the translation language label right?")
@@ -209,7 +210,6 @@ if selected == 'Send Message':
                 else:
                     st.button("Incorrect",disabled=True)
                     if incorrect:
-                        #with st.form("incorrect_form", clear_on_submit=False):
 
                             if correct_lang_submitted:
                                 st.selectbox("What language should it have been?",languages.LANGUAGES.values(),disabled=True)
@@ -220,8 +220,7 @@ if selected == 'Send Message':
 
                                 st.button("OK",on_click=submit_correct_lang, args=(abbr,))
 
-            
-            #NEED TO DO SOMETHING WITH THIS
+
             st.markdown('### How did we get the translation language label?')
             st.markdown(f'We used the data from the messages {receiver} has sent to decide!')
 
