@@ -55,9 +55,6 @@ def incorrect_translation():
 def submit_correct_lang(lang):
     st.session_state.send_message_list.append('correct_lang_submitted')
     with db.con:
-        st.write(f'''UPDATE table_with_all_langs_and_id 
-            SET label = \'{lang}\'
-            WHERE row_id = (SELECT MAX(row_id) FROM table_with_all_langs_and_id)''')
         db.cur.execute(f'''UPDATE table_with_all_langs_and_id 
             SET label = \'{lang}\'
             WHERE row_id = (SELECT MAX(row_id) FROM table_with_all_langs_and_id)''')
@@ -183,12 +180,18 @@ if selected == 'Send Message':
             correct_lang_submitted = 'correct_lang_submitted' in st.session_state.send_message_list
             
             if not (correct or incorrect or correct_lang_submitted):
-                st.session_state.received_lang = db.get_recipient_lang(sent_id)
-            received_message = translator.translate(sent_message,dest = st.session_state.received_lang).text
+                # st.session_state.received_lang = db.get_recipient_lang(sent_id)
+                lang_list = db.get_recipient_lang(sent_id)
+                st.session_state.received_lang = lang_list[0]
+                st.session_state.ai_lang = lang_list[1]
+                st.session_state.received_message = translator.translate(sent_message,dest = st.session_state.ai_lang).text
             st.success(f"Sent {sender}'s message to {receiver}")
             st.markdown(f'{receiver} received the message in: **{languages.LANGUAGES.get(st.session_state.received_lang)}**' )
-            st.markdown(f'The message {receiver} received is: **{received_message}**')
-            st.markdown(f"Did we get that translation language right?")
+            st.markdown(f'The message {receiver} received is: **{st.session_state.received_message}**')
+            st.markdown(f'\tNote: this was translated using our AI predicted language')
+            st.markdown(f'Our AI predicted the desired language to be: **{st.session_state.ai_lang}**')
+            st.markdown(f'The label for the language decision in this case was: **{st.session_state.received_lang}**')
+            st.markdown(f"Did we get the translation language label right?")
             col1, col2 = st.columns(2)
             
             with col1:
@@ -219,7 +222,7 @@ if selected == 'Send Message':
 
             
             #NEED TO DO SOMETHING WITH THIS
-            st.markdown('### How did we get the translation language?')
+            st.markdown('### How did we get the translation language label?')
             st.markdown(f'We used the data from the messages {receiver} has sent to decide!')
 
             recipient_history_id = db.get_all_sent_history_info(sent_id).get("recipient_history_id")
