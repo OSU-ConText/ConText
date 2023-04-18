@@ -57,7 +57,7 @@ while (not_quit):
         sent_message = translator.translate(text_message,dest=lang).text
         print("\nThe sentence you sent is:\n" + sent_message + "\n")
         database.update_history(sent_id,lang)
-        received_lang = database.get_recipient_lang(sent_id)
+        received_lang = database.get_recipient_lang(sent_id)[0]
         received_message = translator.translate(sent_message,dest = received_lang).text
         print("\nThe translated sentence received by the other user in the conversation is:\n " + received_message + "\n")
         print("\nThe language of the sentence the user received is: " + received_lang)

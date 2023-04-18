@@ -1,0 +1,1 @@
+This is the code I made to learn sqlite3 for Python.  Adding it here in case it is helpful as a reference.
