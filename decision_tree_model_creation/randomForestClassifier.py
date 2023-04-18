@@ -12,7 +12,7 @@ from sklearn.datasets import make_classification
 
 
 # open the CSV file
-with open('csv_files/new_partial_langs_and_ids.csv', 'r') as f:
+with open('csv_files/lang_subset_with_nones.csv', 'r') as f:
     reader = csv.reader(f)
     labels = next(reader)
     data = list(reader)
