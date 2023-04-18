@@ -80,7 +80,7 @@ def generateMessages(id, convos):
 
 #Starts multiple conversations for each user
 def generateConversations(num_users):
-    #create 10 users (find a way to pass in a value so we can choose num users?)
+    #create 10 users
     for i in range(num_users):
         createUser()
     #create conversations between users

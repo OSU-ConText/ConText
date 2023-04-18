@@ -18,7 +18,7 @@ def open_csv(csv_name):
             labels = next(reader)
             #first_column = reader.columns[0]
             data = list(reader)
-    X = [[(float(row[i])) for i in range(1, len(row)-1)] for row in data]
+    X = [[(float(row[i])) for i in range(1, len(row))] for row in data]
     y = [str(row[0]) for row in data]
     run_models(X, y)
 

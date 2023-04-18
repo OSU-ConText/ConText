@@ -101,7 +101,7 @@ def validate_partial_langs_and_id(model):
     #run validations
     cross_validation(model, X, y)
     accuracy(model, X, y)
-    #confusion_matrix(gnb_partial_langs, X, y)
+    confusion_matrix(model, X, y)
     find_f1_score(model, X, y)
     compare_accuracy(model, X, y)
 
@@ -121,7 +121,7 @@ def validate_all_langs_and_id(model):
     #run validations
     cross_validation(model, X, y)
     accuracy(model, X, y)
-    #confusion_matrix(gnb_partial_langs, X, y)
+    confusion_matrix(model, X, y)
     find_f1_score(model, X, y)
     compare_accuracy(model, X, y)
 
