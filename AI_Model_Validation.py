@@ -90,7 +90,7 @@ def find_f1_score(model, X, y):
 def validate_partial_langs_and_id(model):
     #partial_langs_and_id_validation
     # open the CSV file
-    with open('csv_files/partial_langs_and_id_data.csv', 'r') as f:
+    with open('csv_files/lang_subset_with_nones.csv', 'r') as f:
         reader = csv.reader(f)
         labels = next(reader)
         #first_column = reader.columns[0]
