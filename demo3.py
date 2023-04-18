@@ -75,7 +75,7 @@ while (not st.session_state.db_created):
      
 
 options = ['Create User', 'Create Conversation', 'Send Message', 'View User']
-selected = st.sidebar.radio('Choose Functionality:', options)
+selected = st.sidebar.radio('Choose Functionality:', options, on_change=clear_session_state)
 
 q = query_usernames()
 users = dict([(value, key) for key, value in q])
@@ -163,18 +163,6 @@ if selected == 'Send Message':
 
 
         if 'text_sent' in st.session_state.send_message_list:
-            translator = Translator()
-            sent_message = translator.translate(st.session_state.text_message,dest=st.session_state.lang).text
-            st.markdown(f'Your message: **{sent_message}**')
-            str = re.split('=|,',st.session_state.conversation)
-            sender = str[1].strip()
-            receiver = str[3].strip()
-            sent_id = get_sent_id(sender,receiver)[0]
-            abbr = {i for i in languages.LANGUAGES if languages.LANGUAGES[i]==(st.session_state.lang)}.pop()
-
-            #handle special case, cannot have '-' in SQLite
-            if abbr == 'zh-cn':
-                abbr = 'zh_cn'
 
             correct = 'correct_translation' in st.session_state.send_message_list
             incorrect = 'incorrect_translation' in st.session_state.send_message_list
@@ -182,6 +170,19 @@ if selected == 'Send Message':
             
             #will rerun when next buttons pressed, so only set language and translation on the first run through
             if not (correct or incorrect or correct_lang_submitted):
+                translator = Translator()
+                sent_message = translator.translate(st.session_state.text_message,dest=st.session_state.lang).text
+                st.markdown(f'Your message: **{sent_message}**')
+                str = re.split('=|,',st.session_state.conversation)
+                sender = str[1].strip()
+                receiver = str[3].strip()
+                sent_id = get_sent_id(sender,receiver)[0]
+                abbr = {i for i in languages.LANGUAGES if languages.LANGUAGES[i]==(st.session_state.lang)}.pop()
+
+            #handle special case, cannot have '-' in SQLite
+                if abbr == 'zh-cn':
+                    abbr = 'zh_cn'
+
                 db.update_history(sent_id,abbr)
                 lang_list = db.get_recipient_lang(sent_id)
                 st.session_state.label_lang_db = lang_list[0]
@@ -190,6 +191,15 @@ if selected == 'Send Message':
                 st.session_state.ai_lang_google = st.session_state.ai_lang_db.replace('_','-')
                 #ai_abbr = {i for i in languages.LANGUAGES if languages.LANGUAGES[i]==(st.session_state.ai_lang_db)}.pop()
                 st.session_state.received_message = translator.translate(sent_message,dest = st.session_state.ai_lang_google).text
+                recipient_history_id = db.get_all_sent_history_info(sent_id).get("recipient_history_id")
+                params = db.get_params(recipient_history_id)
+                st.session_state.all_messages_lang = languages.LANGUAGES.get(params.get('all_messages_lang'))
+                st.session_state.conv_messages_lang = languages.LANGUAGES.get(params.get('conv_messages_lang'))
+                st.session_state.last_message_lang = params.pop('last_message_lang')
+            
+                if st.session_state.last_message_lang != None:
+                    st.session_state.last_message_lang = languages.LANGUAGES.get(st.session_state.last_message_lang.replace('_','-'))  
+
             st.success(f"Sent {sender}'s message to {receiver}")
             st.markdown(f'{receiver} received the message in: **{languages.LANGUAGES.get(st.session_state.label_lang_google)}**' )
             st.markdown(f'The message {receiver} received is: **{st.session_state.received_message}**')
@@ -226,16 +236,10 @@ if selected == 'Send Message':
 
 
             st.markdown('### How did we get the translation language label?')
-            st.markdown(f'We used the data from the messages {receiver} has sent to decide!')
-
-            recipient_history_id = db.get_all_sent_history_info(sent_id).get("recipient_history_id")
-            params = db.get_params(recipient_history_id)
-            all_messages_lang = languages.LANGUAGES.get(params.get('all_messages_lang'))
-            conv_messages_lang = languages.LANGUAGES.get(params.get('conv_messages_lang'))
-            last_message_lang = languages.LANGUAGES.get(params.get('last_message_lang').replace('_','-'))
-            st.markdown(f'Top language of the messages that {receiver} has sent in all conversations: **{all_messages_lang}**')
-            st.markdown(f'Top language of the messages that {receiver} has sent to {sender}: **{conv_messages_lang}**')
-            st.markdown(f'Language of the last message that {receiver} has sent to {sender}: **{last_message_lang}**')
+            st.markdown(f'We used the data from the messages {receiver} has sent to decide!') 
+            st.markdown(f'Top language of the messages that {receiver} has sent in all conversations: **{st.session_state.all_messages_lang}**')
+            st.markdown(f'Top language of the messages that {receiver} has sent to {sender}: **{st.session_state.conv_messages_lang}**')
+            st.markdown(f'Language of the last message that {receiver} has sent to {sender}: **{st.session_state.last_message_lang}**')
 
             try_again = st.button("Send another message", on_click=clear_session_state)
 
@@ -270,7 +274,11 @@ if selected == 'View User':
             st.markdown(f'### {user}\'s Message History Information')
             all_messages_lang = languages.LANGUAGES.get(parameters.pop('all_messages_lang'))
             conv_messages_lang = languages.LANGUAGES.get(parameters.pop('conv_messages_lang'))
-            last_message_lang = languages.LANGUAGES.get(parameters.pop('last_message_lang').replace('_','-'))
+            last_message_lang = parameters.pop('last_message_lang')
+
+            if last_message_lang != None:
+                last_message_lang = languages.LANGUAGES.get(last_message_lang.replace('_','-'))              
+
             total = parameters.pop('total')
             st.markdown(f'Top language of the messages that {user} has sent in all conversations: **{all_messages_lang}**')
             st.markdown(f'Top language of the messages that {user} has sent to {recipient}: **{conv_messages_lang}**')
