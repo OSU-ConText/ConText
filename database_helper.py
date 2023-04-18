@@ -2,6 +2,7 @@ import languages
 import database
 from joblib import load
 import csv
+import training_data_tables
 
 user = "user"
 sent_history = "sent_history"
@@ -81,6 +82,9 @@ def create_tables():
                 sender_name TEXT,
                 receiver_id INTEGER,
                 receiver_name TEXT)''')
+        
+        if (check_table_existence(training_data_tables.table_with_all_langs_and_id, True) == False):
+            training_data_tables.create_table_with_all_langs_and_id()
 
 
 
