@@ -159,7 +159,7 @@ def make_lang_decision(all_lang, conv_lang, last_lang):
 def ai_lang(all_lang, conv_lang, last_lang, decision_lang):
     #construct data row
     params = [all_lang, conv_lang, last_lang]
-    en, es, hi, fr, ar, bn, ru, pt, id, ja, de, pa, zh_cn = 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0
+    en, es, hi, fr, ar, bn, ru, pt, id, ja, de, pa, zh_cn, vi = 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0
 
     for param in params:
         if param == 'en':
@@ -188,15 +188,13 @@ def ai_lang(all_lang, conv_lang, last_lang, decision_lang):
             pa += 1.0
         elif param == 'zh-cn':
             zh_cn += 1.0
+        elif param == 'vi':
+            vi += 1.0
 
-    data = [decision_lang, en, es, hi, fr, ar, bn, ru, pt, id, ja, de, pa, zh_cn]
+    data = [decision_lang, en, es, hi, fr, ar, bn, ru, pt, id, ja, de, pa, zh_cn, vi]
 
     #loading pickle file
-    file = open('AI_model_pkl_files/gnb_partial_langs_and_id.pkl', 'rb')
-
-    model = load(file)
-
-    file.close()
+    model = load('AI_model_pkl_files/random_forest_partial_langs_and_id.pkl')
 
     with open('csv_files/ai_decision.csv', 'w', newline='') as f:
         #create new writer
