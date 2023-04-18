@@ -202,7 +202,6 @@ if selected == 'Send Message':
 
             st.markdown(f'Your message: **{st.session_state.sent_message}**')
             st.success(f"Sent {st.session_state.sender}'s message to {st.session_state.receiver}")
-            st.markdown(f'{st.session_state.receiver} received the message in: **{languages.LANGUAGES.get(st.session_state.label_lang_google)}**' )
             st.markdown(f'The message {st.session_state.receiver} received is: **{st.session_state.received_message}**')
             st.info(f'Note: this was translated using our AI predicted language')
             st.markdown(f'Our AI predicted the desired language to be: **{languages.LANGUAGES.get(st.session_state.ai_lang_google)}**')
