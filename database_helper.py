@@ -2,6 +2,7 @@ import languages
 import database
 from joblib import load
 import csv
+import training_data_tables
 
 user = "user"
 sent_history = "sent_history"
@@ -81,6 +82,9 @@ def create_tables():
                 sender_name TEXT,
                 receiver_id INTEGER,
                 receiver_name TEXT)''')
+        
+        if (check_table_existence(training_data_tables.table_with_all_langs_and_id, True) == False):
+            training_data_tables.create_table_with_all_langs_and_id()
 
 
 
@@ -155,44 +159,21 @@ def make_lang_decision(all_lang, conv_lang, last_lang):
 def ai_lang(all_lang, conv_lang, last_lang, decision_lang):
     #construct data row
     params = [all_lang, conv_lang, last_lang]
-    en, es, hi, fr, ar, bn, ru, pt, id, ja, de, pa, zh_cn = 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0
+    langs = {}
+    for lang in languages.LANGUAGES.keys():
+        langs[lang] = 1.0
 
     for param in params:
-        if param == 'en':
-            en += 1.0
-        elif param == 'es':
-            es += 1.0
-        elif param == 'hi':
-            hi += 1.0
-        elif param == 'fr':
-            fr += 1.0
-        elif param == 'ar':
-            ar += 1.0
-        elif param == 'bn':
-            bn += 1.0
-        elif param == 'ru':
-            ru += 1.0
-        elif param == 'pt':
-            pt += 1.0
-        elif param == 'id':
-            id += 1.0
-        elif param == 'ja':
-            ja += 1.0
-        elif param == 'de':
-            de += 1.0
-        elif param == 'pa':
-            pa += 1.0
-        elif param == 'zh-cn':
-            zh_cn += 1.0
+        for lang in langs.keys():
+            if param == lang:
+                langs[lang] += 1.0
 
-    data = [decision_lang, en, es, hi, fr, ar, bn, ru, pt, id, ja, de, pa, zh_cn]
+    data = [decision_lang]
+    for lang in langs.keys():
+        data.append(float(langs.get(lang)))
 
     #loading pickle file
-    file = open('AI_model_pkl_files/gnb_partial_langs_and_id.pkl', 'rb')
-
-    model = load(file)
-
-    file.close()
+    model = load('AI_model_pkl_files/random_forest_partial_langs_and_id.pkl')
 
     with open('csv_files/ai_decision.csv', 'w', newline='') as f:
         #create new writer

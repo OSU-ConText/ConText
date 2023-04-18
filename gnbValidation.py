@@ -43,8 +43,7 @@ def print_proba(model, X_test):
 
 if __name__ == '__main__':
     gnb_partial_langs = load('AI_model_pkl_files/gnb_partial_langs_and_id.pkl')
-    knearest_partial_langs = load('AI_model_pkl_files/kNearest_partial_langs_and_id.pkl')
-    with open('csv_files/new_partial_langs_and_ids.csv', 'r') as f:
+    with open('csv_files/lang_subset_with_nones.csv', 'r') as f:
         reader = csv.reader(f)
         labels = next(reader)
         #first_column = reader.columns[0]
@@ -52,5 +51,5 @@ if __name__ == '__main__':
     X = [[(float(row[i])) for i in range(1, len(row))] for row in data]
     y = [str(row[0]) for row in data]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
-    #create_confusion_matrix(gnb_partial_langs, X, y)
+    create_confusion_matrix(gnb_partial_langs, X, y)
     print_proba(gnb_partial_langs, X_test)

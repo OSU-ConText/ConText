@@ -16,6 +16,7 @@ LANGUAGES = {
     'de': 'german',
     'pa': 'punjabi',
     'zh-cn': 'chinese (simplified)',
+    'vi': 'vietnamese',
 }
 LANGUAGES2 = {
     'af': 'afrikaans',

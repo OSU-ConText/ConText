@@ -137,7 +137,7 @@ def get_recipient_lang(sent_id):
     if (decision_lang == None):
         decision_lang = cur.execute(f"SELECT last_message_lang FROM {sent_history} WHERE sent_id = {sent_id}").fetchall()[0][0]
   
-    if(all_lang is not None and last_lang is not None and conv_lang is not None):
+    if(all_lang is not None):
         database_helper.add_training_data(all_lang, conv_lang, last_lang, decision_lang)
         #database_helper.record_class_tree_training_data(recipient_history_id, decision_lang)
         #database_helper.record_class_data(recipient_history_id, decision_lang)
@@ -242,7 +242,6 @@ def get_all_sent_history_info(sent_id):
     result.update({"all_messages_lang": database_helper.get_attr_from_user("all_messages_lang",user_id)})
     result.update({"conv_messages_lang": database_helper.get_attr_from_sent_history("conv_messages_lang",sent_id)})
     result.update({"last_message_lang": database_helper.get_attr_from_sent_history("last_message_lang",sent_id)})
-    print(database_helper.get_attr_from_sent_history("last_message_lang",sent_id))
     result.update({"is_all_messages": str(bool(database_helper.get_attr_from_sent_history("is_all_messages",sent_id)))})
     result.update({"total": str(database_helper.get_attr_from_sent_history("total",str(sent_id)))})
     row = cur.execute(f"SELECT * FROM {sent_history} WHERE sent_id = {sent_id}").fetchone()
