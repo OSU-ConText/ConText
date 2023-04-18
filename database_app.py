@@ -15,6 +15,7 @@ while (not_quit):
     print('[SI] Get sent ids for a particular user_id')
     print('[UP]date the language count for a sent_id')
     print('[GAFU] Get attribute from user')
+    print('[AI] ai_lang')
     print('[Q]uit the program')
 
     user_input = input()
@@ -61,6 +62,12 @@ while (not_quit):
         user_id = int(user_id)
         result = database_helper.get_attr_from_user(desired_attr, user_id)
         print(result)
+    elif (user_input == 'AI'):
+        all_lang = input('all_lang? ')
+        conv_lang = input('conv_lang? ')
+        recent_lang = input('recent_lang? ')
+        label = input('label? ')
+        database_helper.ai_lang(all_lang, conv_lang, recent_lang, label)
     elif (user_input == 'Q'):
         print('Thanks for stopping by!')
         not_quit = False
