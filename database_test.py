@@ -83,7 +83,7 @@ def test_get_pref_lang_simple():
 
     recipient_id = sent_ids[1]
 
-    assert database.get_recipient_lang(recipient_id) == "en"
+    assert database.get_recipient_lang(recipient_id)[0] == "en"
 
 #set the two conversation params to one lang and the all_messages param to another
 def test_get_pref_lang_majority():
@@ -104,7 +104,7 @@ def test_get_pref_lang_majority():
 
     recipient_id = sent_ids[1]
 
-    assert database.get_recipient_lang(recipient_id) == "fr"
+    assert database.get_recipient_lang(recipient_id)[0] == "fr"
 
 #set one of the conversation and the all_messages param to one lang, set the other conversation param to another lang
 def test_get_pref_lang_majority_2():
@@ -127,7 +127,7 @@ def test_get_pref_lang_majority_2():
 
     recipient_id = sent_ids[1]
 
-    assert database.get_recipient_lang(recipient_id) == "en"
+    assert database.get_recipient_lang(recipient_id)[0] == "en"
 
 #set three parameters to different value, rely on all langs tiebreaker
 def test_get_pref_lang_tiebreak():
@@ -151,7 +151,7 @@ def test_get_pref_lang_tiebreak():
 
     recipient_id = sent_ids[1]
 
-    assert database.get_recipient_lang(recipient_id) == "en"
+    assert database.get_recipient_lang(recipient_id)[0] == "en"
 
 def test_get_attr_from_sent_history():
     uid = database.create_user()
