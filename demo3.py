@@ -201,10 +201,14 @@ if selected == 'Send Message':
                     st.session_state.last_message_lang = languages.LANGUAGES.get(st.session_state.last_message_lang.replace('_','-'))  
 
             st.markdown(f'Your message: **{st.session_state.sent_message}**')
-            st.success(f"Sent {st.session_state.sender}'s message to {st.session_state.receiver}")
-            st.markdown(f'The message {st.session_state.receiver} received is: **{st.session_state.received_message}**')
-            st.info(f'Note: this was translated using our AI predicted language')
-            st.markdown(f'Our AI predicted the desired language to be: **{languages.LANGUAGES.get(st.session_state.ai_lang_google)}**')
+            #st.success(f"Sent {st.session_state.sender}'s message to {st.session_state.receiver}")
+            st.success(f'The message {st.session_state.receiver} received is: **{st.session_state.received_message}**')
+            st.markdown(f'This was translated using our AI predicted language')
+            st.success(f'Our AI predicted the desired language to be: **{languages.LANGUAGES.get(st.session_state.ai_lang_google)}**')
+            if st.session_state.ai_lang_google == st.session_state.label_lang_google:
+                st.success('Our AI correctly predicted the label!', icon='🎉' )
+            else:
+                st.error('Our AI did not predict the correct label. It happens.', icon='😢')
             st.markdown(f'The label for the language decision in this case was: **{languages.LANGUAGES.get(st.session_state.label_lang_google)}**')
             st.markdown(f"Did we get the translation language label right?")
             col1, col2 = st.columns(2)
