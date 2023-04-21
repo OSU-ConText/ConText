@@ -59,5 +59,5 @@ def trim_index(csv_file, df):
 if __name__ == '__main__':
     csv_file = input("Enter name of csv file:\n")
     df = pd.read_csv(csv_file)
-    #trim_index(csv_file, df)
-    open_csv(csv_file)
+    trim_index(csv_file, df)
+    #open_csv(csv_file)
